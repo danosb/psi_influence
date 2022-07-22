@@ -46,4 +46,4 @@ The time alloted for each run, as well as the number of run, are inputted by the
 
 ## Setup
 
-Setup is very straightforward. First you'll need to update the API key in the Python file. These are available at https://quantumnumbers.anu.edu.au/api-key. They provide 100 free calls per month. From there simply install any required packages, download included assets (e.g. images, sound), and run the Python file.
+Setup is very straightforward. First you'll need to update the API key in line 82 of main.py. These are available at https://quantumnumbers.anu.edu.au/api-key. They provide 100 free calls per month. From there simply install any required packages, download included assets (e.g. images, sound), and run the Python file.
