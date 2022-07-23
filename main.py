@@ -240,12 +240,12 @@ def displayResults(runcount, trial_id, duration):
         cursor.execute("select mod_7 from sets where trial_id='" + str(trial_id) + "' and set_number='1' and run_number='"+ str(loopcount) + "' ")
         setmod7 = cursor.fetchone()
 
-        # Show dummy results if mod7 <> 6
-        if int(str(setmod7)[1:len(setmod7)-3]) < 6:
+        # Show dummy results if mod7 < 5
+        if int(str(setmod7)[1:len(setmod7)-3]) < 5:
             cursor.execute("select is_odd from sets where trial_id='" + str(trial_id) + "' and set_number=3 and run_number='" + str(loopcount) + "' ")
             is_odd = cursor.fetchone()
 
-        # Show real results if mod7=6    
+        # Show real results if mod7 > 4   
         else:
             cursor.execute("select is_odd from sets where trial_id='" + str(trial_id) + "' and set_number=4 and run_number='" + str(loopcount) + "' ")
             is_odd = cursor.fetchone()
