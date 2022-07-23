@@ -44,7 +44,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS sets(
     trial_id integer NOT NULL,
     set_sum integer NOT NULL,
     run_number integer NOT NULL,
-    mod_7 integer,
+    mod_9 integer,
     is_odd text,
     apidata_id integer NOT NULL,
     FOREIGN KEY (apidata_id) REFERENCES apidata(id) ,
@@ -81,15 +81,15 @@ def start_trial():
 
             ### Retrieve four sets of quantum random numbers via API for this run
 
-            my_headers = {'x-api-key' : '**INSERT YOUR API KEY HERE**'}
+            my_headers = {'x-api-key' : '**INSERT API KEY HERE**'}
 
-            # Set 1 with sum and module 7 
+            # Set 1 with sum and module 9 
             # .. used to determine whether to preview real or dummy results of a given run
             response1 = requests.get('https://api.quantumnumbers.anu.edu.au?length=1000&type=uint8', headers=my_headers)
             response1_dict=json.loads(response1.content)
             set1 = np.array(response1_dict['data'])
             set1sum = np.sum(set1)
-            set1mod7 = set1sum % 7
+            set1mod9 = set1sum % 9
 
             # Set 2 with sum and module 7 
             # .. used to determine what action the user should take
@@ -97,7 +97,7 @@ def start_trial():
             response2_dict=json.loads(response2.content)
             set2 = np.array(response2_dict['data'])
             set2sum = np.sum(set2)
-            set2mod7 = set2sum % 7
+            set2mod9 = set2sum % 9
 
             # Set 3 with sum 
             # .. this is the dummy set that may or may not be shown during the preview
@@ -121,7 +121,7 @@ def start_trial():
             # Return set 1 ID and use to populate sets table for set 1
             cursor.execute("select max(id) from apidata")
             set1_id = cursor.fetchone()
-            cursor.execute("INSERT INTO sets(set_number,trial_id,run_number,set_sum,mod_7,apidata_id)VALUES(?,?,?,?,?,?)",('1',str(trial_id),loopcount,str(set1sum),str(set1mod7),str(set1_id)))
+            cursor.execute("INSERT INTO sets(set_number,trial_id,run_number,set_sum,mod_9,apidata_id)VALUES(?,?,?,?,?,?)",('1',str(trial_id),loopcount,str(set1sum),str(set1mod9),str(set1_id)))
             db.commit()  
 
             # Populate rawata table for set2
@@ -131,7 +131,7 @@ def start_trial():
             # Return set 2 ID and use to populate sets table for set 2
             cursor.execute("select max(id) from apidata")
             set2_id = cursor.fetchone()
-            cursor.execute("INSERT INTO sets(set_number,trial_id,run_number,set_sum,mod_7,apidata_id)VALUES(?,?,?,?,?,?)",('2',str(trial_id),loopcount,str(set2sum),str(set2mod7),str(set2_id)))
+            cursor.execute("INSERT INTO sets(set_number,trial_id,run_number,set_sum,mod_9,apidata_id)VALUES(?,?,?,?,?,?)",('2',str(trial_id),loopcount,str(set2sum),str(set2mod9),str(set2_id)))
             db.commit()  
 
             # Populate rawata table for set3
@@ -236,16 +236,16 @@ def displayResults(runcount, trial_id, duration):
         error.place(x = 30, y = 30)
         error.config(padx=0)
 
-        #Retreive modulo 7 from set1. This determines whether to show real (set 4) or dummy (set 3)
-        cursor.execute("select mod_7 from sets where trial_id='" + str(trial_id) + "' and set_number='1' and run_number='"+ str(loopcount) + "' ")
-        setmod7 = cursor.fetchone()
+        #Retrieve modulo 9 from set1. This determines whether to show real (set 4) or dummy (set 3)
+        cursor.execute("select mod_9 from sets where trial_id='" + str(trial_id) + "' and set_number='1' and run_number='"+ str(loopcount) + "' ")
+        setmod9 = cursor.fetchone()
 
-        # Show dummy results if mod7 < 5
-        if int(str(setmod7)[1:len(setmod7)-3]) < 5:
+        # Show dummy results if mod9 < 6
+        if int(str(setmod9)[1:len(setmod9)-3]) < 6:
             cursor.execute("select is_odd from sets where trial_id='" + str(trial_id) + "' and set_number=3 and run_number='" + str(loopcount) + "' ")
             is_odd = cursor.fetchone()
 
-        # Show real results if mod7 > 4   
+        # Else show real reasults
         else:
             cursor.execute("select is_odd from sets where trial_id='" + str(trial_id) + "' and set_number=4 and run_number='" + str(loopcount) + "' ")
             is_odd = cursor.fetchone()
@@ -335,11 +335,11 @@ def exec_runs(trial_id, runcount, duration):
         error.config(padx=0)
 
         # Set 2 determines which action the user should take
-        cursor.execute("select mod_7 from sets where trial_id='" + str(trial_id) + "' and set_number='2' and run_number='"+ str(loopcount) + "' ")
-        setmod7 = cursor.fetchone()
+        cursor.execute("select mod_9 from sets where trial_id='" + str(trial_id) + "' and set_number='2' and run_number='"+ str(loopcount) + "' ")
+        setmod9 = cursor.fetchone()
 
-        # If mod7 of set 2 < 3 then influence even
-        if int(str(setmod7)[1:len(setmod7)-3]) < 3:
+        # If mod9 of set 2 < 4 then influence even
+        if int(str(setmod9)[1:len(setmod9)-3]) < 4:
             image1 = Image.open("even.gif")
             test = ImageTk.PhotoImage(image1)
             label1 = tkinter.Label(image=test)
@@ -350,8 +350,8 @@ def exec_runs(trial_id, runcount, duration):
             window.update_idletasks()
             window.update()
 
-        # If mod7 of set 2 > 3 then influence odd
-        if int(str(setmod7)[1:len(setmod7)-3]) > 3:
+        # If mod9 of set 2 > 4 then influence odd
+        if int(str(setmod9)[1:len(setmod9)-3]) > 4:
             image1 = Image.open("odd.gif")
             test = ImageTk.PhotoImage(image1)
             label1 = tkinter.Label(image=test)
@@ -362,8 +362,8 @@ def exec_runs(trial_id, runcount, duration):
             window.update_idletasks()
             window.update()
 
-        # If mod7 of set 2 = 3 then do nothing
-        if int(str(setmod7)[1:len(setmod7)-3]) == 3:
+        # If mod9 of set 2 = 4 then do nothing
+        if int(str(setmod9)[1:len(setmod9)-3]) == 4:
             image1 = Image.open("donothing.gif")
             test = ImageTk.PhotoImage(image1)
             label1 = tkinter.Label(image=test)
@@ -383,23 +383,23 @@ def exec_runs(trial_id, runcount, duration):
         is_odd = cursor.fetchone()
 
         # If influence even and result even
-        if int(str(setmod7)[1:len(setmod7)-3]) < 3 and int(str(is_odd)[2:len(is_odd)-4])==0:
+        if int(str(setmod9)[1:len(setmod9)-3]) < 4 and int(str(is_odd)[2:len(is_odd)-4])==0:
             playsound('correct.mp3')
 
         # If influence even and result odd    
-        if int(str(setmod7)[1:len(setmod7)-3]) < 3 and int(str(is_odd)[2:len(is_odd)-4])==1:
+        if int(str(setmod9)[1:len(setmod9)-3]) < 4 and int(str(is_odd)[2:len(is_odd)-4])==1:
             playsound('incorrect.mp3')
 
         # If influence odd and result odd    
-        if int(str(setmod7)[1:len(setmod7)-3]) > 3 and int(str(is_odd)[2:len(is_odd)-4])==1:
+        if int(str(setmod9)[1:len(setmod9)-3]) > 4 and int(str(is_odd)[2:len(is_odd)-4])==1:
             playsound('correct.mp3')     
 
         # If influence odd and result even  
-        if int(str(setmod7)[1:len(setmod7)-3]) > 3 and int(str(is_odd)[2:len(is_odd)-4])==0:
+        if int(str(setmod9)[1:len(setmod9)-3]) > 4 and int(str(is_odd)[2:len(is_odd)-4])==0:
             playsound('incorrect.mp3')     
 
         # If influence nothing      
-        if int(str(setmod7)[1:len(setmod7)-3]) == 3:
+        if int(str(setmod9)[1:len(setmod9)-3]) == 4:
             playsound('correct.mp3')     
          
         loopcount = loopcount + 1
