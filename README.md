@@ -21,12 +21,12 @@ To retreive these quantum random numbers we'll use an API offered by Australian 
 Each experimental trial consists of multiple runs, and each run includes four distinct sets of quantum nummbers. For each of the four sets we'll use sets of 1000 integers between 0 and 255. We will then sum all numbers in each set. The four sets in each runs are used in the following manner:
 
 Set 1: Determines whether a dummy set (Set #3) or real set (Set #4) gets displayed to user prior to trial.
-  - To do so we'll sum the 1000 numbers in Set 1 and do modulo 7. If modulo 7 is less than 5 then the preview will show dummy numbers (Set #3), else show the real results (Set $4), which will occur 2/7 of the time. If real numbers are previewed prior to the actual trial then we expect the numbers to NOT be open to intentional influence. We want to test this condition.
+  - To do so we'll sum the 1000 numbers in Set 1 and do modulo 9. If modulo 9 is less than 6 then the preview will show dummy numbers (Set #3), else show the real results (Set $4), which will occur 3/9 of the time. If real numbers are previewed prior to the actual trial then we expect the numbers to NOT be open to intentional influence. We want to test this condition.
 
 Set 2: Determines which action to direct the user to take during the actual trial. 
-  - Again, we will sum and take modulo 7 on Set 2.
-		- If <3 then direct user to influence sum to be positive (green)
-		- If >3 then direct user to influence sum to be negative (red)
+  - Again, we will sum and take modulo 9 on Set 2.
+		- If <4 then direct user to influence sum to be positive (green)
+		- If >4 then direct user to influence sum to be negative (red)
 		- If =3 then direct user to exert no influence
 
 Set 3: Is a dummy set that is not used during the experiment.
