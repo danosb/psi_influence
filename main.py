@@ -81,7 +81,7 @@ def start_trial():
 
             ### Retrieve four sets of quantum random numbers via API for this run
 
-            my_headers = {'x-api-key' : '**INSERT API KEY HERE**'}
+            my_headers = {'x-api-key' : '**INSERT YOUR API KEY HERE**'}
 
             # Set 1 with sum and module 9 
             # .. used to determine whether to preview real or dummy results of a given run
@@ -375,7 +375,7 @@ def exec_runs(trial_id, runcount, duration):
             window.update()
         
         # Wait the defined duration to allow influence to elapse
-        time.sleep(60*int(duration))
+        time.sleep(6*int(duration))
 
         # Check results and play sound
 
@@ -404,14 +404,315 @@ def exec_runs(trial_id, runcount, duration):
          
         loopcount = loopcount + 1
 
+    finalScreen()
+
+def finalScreen():
+
     for widget in window.winfo_children():
         widget.destroy()
 
-    error = Message(text="Good job! All done. You can close this window.", width=600)
+    error = Message(text="Good job! All done.", width=600)
     error.place(x = 30, y = 10)
     error.config(padx=0)
 
 
+# even % x odd % by:
+# Unobserved, influence to even
+# Unobserved, influence to odd
+# Unobserved, no influence
+# Observed, influence to even
+# Observed, influence to odd
+# Observed, no influence
+
+    # Unobserved, influence to even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 < 4""")
+    unobInfEven = cursor.fetchone()
+
+    # Unobserved, influence to even, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 < 4
+        and s4.is_odd=0""")
+    unobInfEven_Even = cursor.fetchone()
+
+    # Unobserved, influence to odd
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 > 4""")
+    unobInfOdd = cursor.fetchone()
+
+    # Unobserved, influence to odd, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 > 4
+        and s4.is_odd=0""")
+    unobInfOdd_Even = cursor.fetchone()
+
+    # Unobserved, no influence
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 = 4""")
+    unobNoInf = cursor.fetchone()
+
+    # Unobserved, no influence, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 < 6
+        and s2.mod_9 = 4
+        and s4.is_odd=0""")
+    unobNoInf_Even = cursor.fetchone()
+
+    # Observed, influence to even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 < 4""")
+    obInfEven = cursor.fetchone()
+
+    # Observed, influence to even, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 < 4
+        and s4.is_odd=0""")
+    obInfEven_Even = cursor.fetchone()
+
+   # Observed, influence to odd
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 > 4""")
+    obInfOdd = cursor.fetchone()
+
+    # Observed, influence to odd, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 > 4
+        and s4.is_odd=0""")
+    obInfOdd_Even = cursor.fetchone()
+
+   # Observed, no influence
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 = 4""")
+    obNoInf = cursor.fetchone()
+
+    # Observed, no influence, outcome even
+    cursor.execute("""select count(*) 
+        from sets s1 
+        join sets s2 on s1.trial_id = s2.trial_id 
+            and s1.run_number = s2.run_number 
+        join sets s4 on s1.trial_id = s4.trial_id 
+            and s1.run_number = s4.run_number        
+        where s1.set_number = 1
+        and s2.set_number = 2
+        and s4.set_number = 4
+        and s1.mod_9 > 5
+        and s2.mod_9 = 4
+        and s4.is_odd=0""")
+    obNoInf_Even = cursor.fetchone()
+
+    error = Message(text="Here are the overall stats for your database:", width=600)
+    error.place(x = 30, y = 80)
+    error.config(padx=0)
+
+    error = Message(text="Total Runs", width=600)
+    error.place(x = 300, y = 120)
+    error.config(padx=0)
+
+    error = Message(text="Percent Odd", width=600)
+    error.place(x = 400, y = 120)
+    error.config(padx=0)
+
+    error = Message(text="Percent Even", width=600)
+    error.place(x = 500, y = 120)
+    error.config(padx=0)
+
+    error = Message(text="Unobserved, Influence to Even", width=600)
+    error.place(x = 50, y = 150)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobInfEven)[1:len(unobInfEven)-3])), width=600)
+    error.place(x = 300, y = 150)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobInfEven_Even)[1:len(unobInfEven_Even)-3])/int(str(unobInfEven)[1:len(unobInfEven)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 150)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(unobInfEven_Even)[1:len(unobInfEven_Even)-3]))/(int(str(unobInfEven)[1:len(unobInfEven)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 150)
+    error.config(padx=0)
+
+    error = Message(text="Unobserved, Influence to Odd", width=600)
+    error.place(x = 50, y = 180)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobInfOdd)[1:len(unobInfOdd)-3])), width=600)
+    error.place(x = 300, y = 180)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobInfOdd_Even)[1:len(unobInfOdd_Even)-3])/int(str(unobInfOdd)[1:len(unobInfOdd)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 180)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(unobInfOdd_Even)[1:len(unobInfOdd_Even)-3]))/(int(str(unobInfOdd)[1:len(unobInfOdd)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 180)
+    error.config(padx=0)
+
+    error = Message(text="Unobserved, No Influence", width=600)
+    error.place(x = 50, y = 210)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobNoInf)[1:len(unobNoInf)-3])), width=600)
+    error.place(x = 300, y = 210)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(unobNoInf_Even)[1:len(unobNoInf_Even)-3])/int(str(unobNoInf)[1:len(unobNoInf)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 210)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(unobNoInf_Even)[1:len(unobNoInf_Even)-3]))/(int(str(unobNoInf)[1:len(unobNoInf)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 210)
+    error.config(padx=0)
+
+    error = Message(text="Observed, Influence to Even", width=600)
+    error.place(x = 50, y = 240)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obInfEven)[1:len(obInfEven)-3])), width=600)
+    error.place(x = 300, y = 240)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obInfEven_Even)[1:len(obInfEven_Even)-3])/int(str(obInfEven)[1:len(obInfEven)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 240)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(obInfEven_Even)[1:len(obInfEven_Even)-3]))/(int(str(obInfEven)[1:len(obInfEven)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 240)
+    error.config(padx=0)
+
+    error = Message(text="Observed, Influence to Odd", width=600)
+    error.place(x = 50, y = 270)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obInfOdd)[1:len(obInfOdd)-3])), width=600)
+    error.place(x = 300, y = 270)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obInfOdd_Even)[1:len(obInfOdd_Even)-3])/int(str(obInfOdd)[1:len(obInfOdd)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 270)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(obInfOdd_Even)[1:len(obInfOdd_Even)-3]))/(int(str(obInfOdd)[1:len(obInfOdd)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 270)
+    error.config(padx=0)
+
+    error = Message(text="Observed, No Influence", width=600)
+    error.place(x = 50, y = 300)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obNoInf)[1:len(obNoInf)-3])), width=600)
+    error.place(x = 300, y = 300)
+    error.config(padx=0)
+
+    error = Message(text=str(int(str(obNoInf_Even)[1:len(obNoInf_Even)-3])/int(str(obNoInf)[1:len(obNoInf)-3])*100)[0:5], width=600)
+    error.place(x = 400, y = 300)
+    error.config(padx=0)
+
+    error = Message(text=str(100-(int(str(obNoInf_Even)[1:len(obNoInf_Even)-3]))/(int(str(obNoInf)[1:len(obNoInf)-3]))*100)[0:5], width=600)
+    error.place(x = 500, y = 300)
+    error.config(padx=0)
+
+    error = Message(text="You can close this window when you're ready.", width=600)
+    error.place(x = 30, y = 380)
+    error.config(padx=0)
 
 ## Terminate database connection and end program
 
