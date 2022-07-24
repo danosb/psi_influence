@@ -375,7 +375,7 @@ def exec_runs(trial_id, runcount, duration):
             window.update()
         
         # Wait the defined duration to allow influence to elapse
-        time.sleep(6*int(duration))
+        time.sleep(60*int(duration))
 
         # Check results and play sound
 
