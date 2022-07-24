@@ -46,7 +46,7 @@ Next, the runs will be begin. For each run we will sum up 1000 random numbers. T
 
 After each run a sound will play indicating whether the user was successful.
 
-All data is logged for later analysis.
+Stats are displayed at the end.
 
 
 ## Setup
