@@ -18,22 +18,25 @@ Here, we aim to improve on these experiments by using quantum random numbers to 
 
 To retreive these quantum random numbers we'll use an API offered by Australian National University Quantum Numbers (AQN) https://quantumnumbers.anu.edu.au/.
 
-Each experimental trial consists of multiple runs, and each run includes four distinct sets of quantum nummbers. For each of the four sets we'll use sets of 1000 integers between 0 and 255. We will then sum all numbers in each set. The four sets in each runs are used in the following manner:
+Each experimental trial consists of multiple runs, and each run includes two distinct sets of quantum nummbers. The two sets in each run are used in the following manner:
 
-Set 1: Determines whether a dummy set (Set #3) or real set (Set #4) gets displayed to user prior to trial.
-  - To do so we'll sum the 1000 numbers in Set 1 and do modulo 9. If modulo 9 is less than 6 then the preview will show dummy numbers (Set #3), else show the real results (Set $4), which will occur 3/9 of the time. If real numbers are previewed prior to the actual trial then we expect the numbers to NOT be open to intentional influence. We want to test this condition.
+Set 1: Determines which of the six groups set #2 will fall into. We have six possible groups.
+  - Unobserved, influence to even
+  - Unobserved, influence to odd
+  - Unobserved, no influence
+  - Observed, influence to even
+  - Observed, influence to odd
+  - Observed, no influence
+  
+  - To do so we'll get a set of 1002 randomm numbers, sum them, and take modulo 6. 
+  - 
 
-Set 2: Determines which action to direct the user to take during the actual trial. 
-  - Again, we will sum and take modulo 9 on Set 2.
-		- If <4 then direct user to influence sum to be positive (green)
-		- If >4 then direct user to influence sum to be negative (red)
-		- If =3 then direct user to exert no influence
+Set 2: Is the set of numbers that may be influenced.
 
-Set 3: Is a dummy set that is not used during the experiment.
-  - Set 3 is often displayed during the preview phase, as dictated by Set 1. We don't want the user to know whether they are previewing real or dummy results, so we'll show Set 3 rather than showing nothing.
+  - We'll get a set of 1000 random numbers, sum them, and take modulo 2 to determine whether the sum is even or odd.
 
-Set 4: Is the set that is always shown to the user during the actual experiment trials. 
-  - Depending on Set 1, Set 4 may or may not have been exposed in the preview.
+In the event that Set #1 dictates we NOT show results during the preview (in other words, results are Unobserved), then we will use a psuedo-random number generator to show dummy results so that the user cannot tell whether real or fake results are being shown.
+
 
 ## Experiment Experience
 
