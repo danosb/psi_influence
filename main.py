@@ -61,7 +61,7 @@ def start_trial():
     setName = name.get()
 
     # Validate that the two inputs are in the expected range
-    if  int(setDuration) > 0 and int(setDuration) < 60 and int(setRuncount) > 0 and int(setRuncount) < 20:
+    if  int(setDuration) > 0 and int(setDuration) < 60 and int(setRuncount) > 0 and int(setRuncount) < 60:
 
         now = datetime.now() # current date and time
         date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
