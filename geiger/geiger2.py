@@ -270,7 +270,7 @@ def tkwindow(prob_geiger_pvalue):
 def vacuum(run_number, trial_number):
 
 	# authentication
-	my_headers = {'x-api-key' : 'JwYw6IIlZ71NbJ5ywKgF19ZRR1XA15hjaRd3kYvQ'}
+	my_headers = {'x-api-key' : '[redacted]'}
 
 	# Set 1 with sum and module 6 
 	response = requests.get('https://api.quantumnumbers.anu.edu.au?length=1024&type=uint8', headers=my_headers)
