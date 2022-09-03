@@ -116,7 +116,7 @@ def main_func():
 
 
         ### Retrieve quantum random numbers via API 
-        my_headers = {'x-api-key' : 'JwYw6IIlZ71NbJ5ywKgF19ZRR1XA15hjaRd3kYvQ'}
+        my_headers = {'x-api-key' : '[redacted]'}
 
         # Set 1 with sum and module 6 
         # .. used to determine whether to preview real or dummy results of a given run
