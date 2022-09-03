@@ -9,4 +9,6 @@ This debate is incredibly important because it deals with the point at which our
 
 As such, I believe this experiment is the strongest indicator we have to point us towards the role played by consciousness in formation of our physical world, a connection most commonly believed to not exist. 
 
-There are a several different types of experiments here, and three different sources for random numbers used. The different random number generator types are captured in subfolders (though geiger2.py uses all three).
+There are a several different types of experiments here, and three different sources for random numbers used. The different random number generator types are captured in subfolder.
+
+/geiger/Geiger2.py is the latest, and optionally uses all three random number sources together.
