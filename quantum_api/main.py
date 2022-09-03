@@ -83,7 +83,7 @@ def start_trial():
 
             ### Retrieve four sets of quantum random numbers via API for this run
 
-            my_headers = {'x-api-key' : 'JwYw6IIlZ71NbJ5ywKgF19ZRR1XA15hjaRd3kYvQ'}
+            my_headers = {'x-api-key' : '[redacted]'}
 
             # Set 1 with sum and module 9 
             # .. used to determine whether to preview real or dummy results of a given run
