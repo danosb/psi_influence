@@ -40,7 +40,6 @@ def random_walk_steps(ftdi):
     number_steps = 0
     numbers_generated = []
 
-    # Goes through binary digits on random numbers from left to right and evaluates whether that digit is a 1 or a 0.
     while abs(bidirectional_count) < n:
         # Request a new random number. We get as many we need in order to reach the bound.
         init_comm = b'\x96'
