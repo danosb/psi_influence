@@ -34,7 +34,8 @@ def random_walk_steps(ftdi, n):
         for i in range(0, bytes_to_rx, 8):
             received_int = int.from_bytes(dx_data[i:i+8], "big") # Stores the int value
             numbers_generated.append(received_int) # Adds int value to an array
-            binary_version = bin(received_int)[2:] # Converts the int version to binary
+            binary_version = bin(received_int)[2:].zfill(64)
+            # binary_version = bin(received_int)[2:] # Converts the int version to binary
             
             # Process the binary version of the random number. Goes through each digit from left to right and evaluates whether that digit is a 1 or a 0. 
             # If an analyzed digit is a 1, then we add 1 to the bidirectional_count. If it's a 0 then we subtract one.
@@ -51,7 +52,6 @@ def random_walk_steps(ftdi, n):
                     if(bidirectional_count) > 0:
                         bidirectional_is_pos = True
                     break
-
 
     return numbers_generated, bidirectional_count, number_steps, bidirectional_is_pos
 
