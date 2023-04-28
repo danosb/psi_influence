@@ -11,6 +11,9 @@ from eeg import eeg_data
 def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
     bidirectional_is_pos = False
     trial = 1
+    trial_cum_sv = 0
+    trial_weighted_sv = 0
+    trial_norm_weighted_sv = 0
 
     # Get MySQL creds from environment variables
     username = os.getenv('MYSQL_USER')
@@ -33,7 +36,7 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
 
     for trial in range(trial_count):
         # Initialize the cumulative surprisal value for this trial
-        trial_cum_p_value = 0
+        trial_weighted_sv = 0
         
         # Loop through for each sub-trial
         for _ in range(count_subtrial_per_trial):
@@ -42,9 +45,13 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
             
             # Calculate cumulative surprisal value across the trial
             if bidirectional_is_pos:
-                trial_cum_p_value += SV
+                trial_weighted_sv += SV
+                trial_cum_sv += SV
+                trial_norm_weighted_sv = trial_weighted_sv / trial_cum_sv
             else:
-                trial_cum_p_value -= SV
+                trial_weighted_sv -= SV
+                trial_cum_sv += SV
+                trial_norm_weighted_sv = trial_weighted_sv / trial_cum_sv
 
             print(f"--------------")
             print(f"Sub-trial number: ", {_+1})
@@ -62,7 +69,9 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
             print(f"c: ",{c})
             print(f"p calculated for subtrial: ",{p_calculated})
             print(f"Surprisal Value (SV) for subtrial: ",{SV})
-            print(f"Cumulative SV for trial {trial+1}: {trial_cum_p_value}")
+            print(f"Sum SV for trial  {trial+1}: {trial_cum_sv}")
+            print(f"Cumulative weighted SV for trial {trial+1}: {trial_weighted_sv}")
+            print(f"Cumulative weighted SV for trial {trial+1}: {trial_norm_weighted_sv}")
 
 
             # Insert the data into the subtrial_data table
@@ -74,10 +83,10 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
     
         # Insert the data into the trial_data table
         insert_query = (
-            "INSERT INTO trial_data (supertrial, trial, cumulative_sv, created_datetime) "
-            "VALUES (%s, %s, %s, %s)"
+            "INSERT INTO trial_data (supertrial, trial, trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv, created_datetime) "
+            "VALUES (%s, %s, %s, %s, %s, %s)"
         )
-        cursor.execute(insert_query, (supertrial+1, trial+1,trial_cum_p_value, datetime.now()))
+        cursor.execute(insert_query, (supertrial+1, trial+1, trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv, datetime.now()))
 
     # Commit the changes  
     connection.commit()

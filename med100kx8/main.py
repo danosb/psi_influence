@@ -87,7 +87,7 @@ def main():
     supertrial = cursor2.fetchone()[0]
 
     # Retrieve all trial and cumulative_sv values associated with max supertrial
-    query = "SELECT trial, cumulative_sv FROM trial_data WHERE supertrial = %s"
+    query = "SELECT trial, trial_norm_weighted_sv FROM trial_data WHERE supertrial = %s"
     cursor2.execute(query, (supertrial,))
 
     # Get column names

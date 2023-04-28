@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS trial_data (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supertrial INT,
     trial INT,
-    cumulative_sv FLOAT,
+    trial_cum_sv FLOAT,
+    trial_weighted_sv FLOAT,
+    trial_norm_weighted_sv FLOAT,
     created_datetime DATETIME
 
 );
