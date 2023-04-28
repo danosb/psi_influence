@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
     a FLOAT,
     b FLOAT,
     c FLOAT,
-    CDF_calculated FLOAT,
+    p_calculated FLOAT,
     SV FLOAT,
     created_datetime DATETIME,
     trial_data_id INT,

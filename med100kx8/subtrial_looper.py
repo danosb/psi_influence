@@ -38,7 +38,7 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
         # Loop through for each sub-trial
         for _ in range(count_subtrial_per_trial):
             numbers_generated, bidirectional_count, number_steps, bidirectional_is_pos = random_walk_steps(ftdi, n)
-            x1, x2, x3, y1, y2, y3, a, b, c, CDF_calculated, SV = interop(ftdi, number_steps)
+            x1, x2, x3, y1, y2, y3, a, b, c, p_calculated, SV = interop(ftdi, number_steps)
             
             # Calculate cumulative surprisal value across the trial
             if bidirectional_is_pos:
@@ -60,17 +60,17 @@ def subtrial_looper(ftdi, count_subtrial_per_trial, trial_count, n):
             print(f"a: ",{a})
             print(f"b: ",{b})
             print(f"c: ",{c})
-            print(f"CDF (p) calculated for subtrial: ",{CDF_calculated})
+            print(f"p calculated for subtrial: ",{p_calculated})
             print(f"Surprisal Value (SV) for subtrial: ",{SV})
             print(f"Cumulative SV for trial {trial+1}: {trial_cum_p_value}")
 
 
             # Insert the data into the subtrial_data table
             insert_query = (
-                "INSERT INTO subtrial_data (supertrial, trial, subtrial_number, numbers_generated, bidirectional_count, number_steps, bidirectional_is_pos, x1, x2, x3, y1, y2, y3, a, b, c, CDF_calculated, SV, created_datetime) "
+                "INSERT INTO subtrial_data (supertrial, trial, subtrial_number, numbers_generated, bidirectional_count, number_steps, bidirectional_is_pos, x1, x2, x3, y1, y2, y3, a, b, c, p_calculated, SV, created_datetime) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             )
-            cursor.execute(insert_query, (supertrial, trial+1, _+1, str(numbers_generated), bidirectional_count, number_steps, bidirectional_is_pos, x1, x2, x3, y1, y2, y3, a, b, c, CDF_calculated, SV, datetime.now()))
+            cursor.execute(insert_query, (supertrial, trial+1, _+1, str(numbers_generated), bidirectional_count, number_steps, bidirectional_is_pos, x1, x2, x3, y1, y2, y3, a, b, c, p_calculated, SV, datetime.now()))
     
         # Insert the data into the trial_data table
         insert_query = (
