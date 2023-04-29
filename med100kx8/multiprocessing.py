@@ -1,4 +1,4 @@
-import queue
+
 import random
 import time
 import threading
@@ -11,6 +11,10 @@ import math
 import os
 from final_output import final_output
 from dbutils.pooled_db import PooledDB
+from multiprocessing import Process
+import multiprocessing
+import queue
+
 
 
 # Device communication parameters
@@ -97,7 +101,7 @@ def extract_numbers(number_queue, stop_event, serial_number):
     ftdi.set_latency_timer(FTDI_DEVICE_LATENCY_MS)
     ftdi.write_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
     ftdi.read_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
-    number_queue.queue.clear() # clear the queue
+
 
 
     while not stop_event.is_set():  # while stop event is not triggered
@@ -217,7 +221,6 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial):
                     'SV': SV,
                     'created_datetime': datetime.now()
                 }
-                
                 db_queue.put(data)
 
                 print(f"--------------")
@@ -297,23 +300,25 @@ def write_to_database(data_queue):
 
 # Get numbers and process the trial
 def process_trial(trial, supertrial, serial_number):
-    number_queue = queue.Queue()
-    db_queue = queue.Queue() 
-    stop_event = threading.Event()
+    number_queue = multiprocessing.Queue()
+    db_queue = multiprocessing.Queue()
+    stop_event = multiprocessing.Event()
 
-    extraction_thread = threading.Thread(target=extract_numbers, args=(number_queue, stop_event, serial_number))
-    analysis_thread = threading.Thread(target=analyze_subtrial, args=(number_queue, stop_event, db_queue, n, trial, supertrial))
-    db_writer_thread = threading.Thread(target=write_to_database, args=(db_queue,))
-    db_writer_thread.start()
+    extraction_process = multiprocessing.Process(target=extract_numbers, args=(number_queue, stop_event, serial_number))
+    analysis_process = multiprocessing.Process(target=analyze_subtrial, args=(number_queue, stop_event, db_queue, n, trial, supertrial))
+    db_writer_process = multiprocessing.Process(target=write_to_database, args=(db_queue,))
+    db_writer_process.start()
 
-    extraction_thread.start()
-    analysis_thread.start()
+    extraction_process.start()
+    analysis_process.start()
 
-    extraction_thread.join()
-    analysis_thread.join()
+    extraction_process.join()
+    analysis_process.join()
 
     db_queue.put(None)  # Signal db_writer to stop
-    db_writer_thread.join()
+    db_writer_process.join()
+
+
 
 
 # Modify the main function to process trials concurrently
