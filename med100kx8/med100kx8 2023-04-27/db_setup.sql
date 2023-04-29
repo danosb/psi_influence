@@ -1,6 +1,3 @@
-drop table subtrial_data;
-drop table trial_data;
-
 /* 
 
     Populate and run in terminal:
@@ -31,10 +28,10 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
     supertrial INT,
     trial INT,
     subtrial_number INT,
-    int_array TEXT,
+    numbers_generated TEXT,
     bidirectional_count INT,
-    bidirectional_is_pos BOOLEAN,
     number_steps INT,
+    bidirectional_is_pos BOOLEAN,
     x1 FLOAT,
     x2 FLOAT,
     x3 FLOAT,
@@ -50,6 +47,3 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
     trial_data_id INT,
     FOREIGN KEY (trial_data_id) REFERENCES trial_data(id)
 );
-
-ALTER TABLE trial_data ADD INDEX supertrial_index (supertrial);
-
