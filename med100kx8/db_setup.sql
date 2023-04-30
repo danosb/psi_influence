@@ -2,7 +2,6 @@ drop table subtrial_data;
 drop table trial_data;
 
 /* 
-
     Populate and run in terminal:
 
     export MYSQL_USER=value

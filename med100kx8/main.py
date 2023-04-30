@@ -1,4 +1,6 @@
 # Pulls number from a random number generator, analyzes, stores to database
+# Uses Scott Wilber's Random Walk Bias Amplification algorithm:
+# ..https://drive.google.com/file/d/1ASvbdI-uQs_4HNL3fh85g72mIRndkjdn/view
 
 import queue
 import random
@@ -21,7 +23,7 @@ FTDI_DEVICE_PACKET_USB_SIZE = 8
 FTDI_DEVICE_TX_TIMEOUT = 5000
 
 n = 31 # Defined number of steps required to complete a random walk
-trial_count = 1000 # Number of trials we'll perform
+trial_count = 5 # Number of trials we'll perform
 count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 
