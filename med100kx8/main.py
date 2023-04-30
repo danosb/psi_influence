@@ -44,7 +44,7 @@ mysql_pool = PooledDB(
 )
 
 
-# Initial RNG hardware device
+# Initialize RNG hardware device
 def device_startup():
     if not serial_number:
         print("%%%% device not found!")
