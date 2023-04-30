@@ -1,3 +1,5 @@
+# Pulls number from a random number generator, analyzes, stores to database
+
 import queue
 import random
 import time
@@ -19,7 +21,7 @@ FTDI_DEVICE_PACKET_USB_SIZE = 8
 FTDI_DEVICE_TX_TIMEOUT = 5000
 
 n = 31 # Defined number of steps required to complete a random walk
-trial_count = 5 # Number of trials we'll perform
+trial_count = 1000 # Number of trials we'll perform
 count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 
@@ -58,7 +60,7 @@ def device_startup():
     return ftdi
 
 
-# Modify the get_supertrial function to use connection pool
+# Looks up the max supertrial number so we can properly assign supertrial for our run
 def get_supertrial():
     try:
         # Get connection from the connection pool
@@ -89,7 +91,7 @@ def get_supertrial():
 
 
 
-# Function to extract numbers from the RNG. This happens indefinitely until a stop signal is received.
+# Function to extract numbers from the RNG. This happens indefinitely until a stop signal is received (analysis for the trial completes)
 def extract_numbers(number_queue, stop_event, serial_number):
     
     ftdi = Ftdi()
@@ -126,7 +128,7 @@ def extract_numbers(number_queue, stop_event, serial_number):
     ftdi.close
 
 
-# Function to analyze subtrials and add to DB write queue
+# Function to analyze subtrials and add to DB write-queue
 def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial):
     subtrial_number = 0
     trial_cum_sv = 0
@@ -262,7 +264,7 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial):
     return ()
 
 
-# Modify the write_to_database function to use connection pool
+# If DB writing is needed this function is called. It runs in its own thread, uses an async queue, and uses connection pooling
 def write_to_database(data_queue):
     while True:
         data = data_queue.get()
@@ -294,7 +296,7 @@ def write_to_database(data_queue):
         cnx1.close()
 
 
-# Get numbers and process the trial
+# Get numbers and process the trial. Uses unique threads for extraction, analyzing, and DB writing
 def process_trial(trial, supertrial, serial_number):
     number_queue = queue.Queue()
     db_queue = queue.Queue() 
@@ -315,7 +317,7 @@ def process_trial(trial, supertrial, serial_number):
     db_writer_thread.join()
 
 
-# Modify the main function to process trials concurrently
+# Main function, loops for trials
 def main():
     start_time = time.time()
     supertrial = get_supertrial()
