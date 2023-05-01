@@ -1,6 +1,6 @@
 # Pulls number from a random number generator, analyzes, stores to database
 # Uses Scott Wilber's Random Walk Bias Amplification algorithm:
-# https://drive.google.com/file/d/1ASvbdI-uQs_4HNL3fh85g72mIRndkjdn/view
+# ..https://drive.google.com/file/d/1ASvbdI-uQs_4HNL3fh85g72mIRndkjdn/view
 
 import queue
 import random
@@ -17,21 +17,32 @@ from final_output import final_output
 from dbutils.pooled_db import PooledDB
 
 
+n = 31 # Defined number of steps required to complete a random walk
+trial_count = 20000 # Number of trials we'll perform
+count_subtrial_per_trial = 21 # Number of subtrials per trial
+serial_number = "QWR4E010"  # Replace with your serial number
+
 # Device communication parameters
 FTDI_DEVICE_LATENCY_MS = 2
 FTDI_DEVICE_PACKET_USB_SIZE = 8
 FTDI_DEVICE_TX_TIMEOUT = 5000
-
-n = 31 # Defined number of steps required to complete a random walk
-trial_count = 5 # Number of trials we'll perform
-count_subtrial_per_trial = 21 # Number of subtrials per trial
-serial_number = "QWR4E010"  # Replace with your serial number
+ftdi = Ftdi()
+ftdi.open_from_url(f"ftdi://ftdi:232:{serial_number}/1")
+ftdi.set_latency_timer(FTDI_DEVICE_LATENCY_MS)
+ftdi.write_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
+ftdi.read_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
 
 # Get MySQL creds from environment variables
 username = os.getenv('MYSQL_USER')
 password = os.getenv('MYSQL_PASSWORD')
 host = os.getenv('MYSQL_HOST')
 database = os.getenv('MYSQL_DB')
+
+# Global variables to store total time taken by functions
+total_extract_numbers_time = 0
+total_analyze_subtrial_time = 0
+total_write_to_database_time = 0
+
 
 # Initialize connection pool for MySQL
 mysql_pool = PooledDB(
@@ -44,22 +55,6 @@ mysql_pool = PooledDB(
     database=database,
     autocommit=True,
 )
-
-
-# Initialize RNG hardware device
-def device_startup():
-    if not serial_number:
-        print("%%%% device not found!")
-        return None
-
-    # print("deviceId:", serial_number, "\n")
-    ftdi = Ftdi()
-    ftdi.open_from_url(f"ftdi://ftdi:232:{serial_number}/1")
-    ftdi.set_latency_timer(FTDI_DEVICE_LATENCY_MS)
-    ftdi.write_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
-    ftdi.read_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
-
-    return ftdi
 
 
 # Looks up the max supertrial number so we can properly assign supertrial for our run
@@ -92,46 +87,43 @@ def get_supertrial():
         return None
 
 
-
 # Function to extract numbers from the RNG. This happens indefinitely until a stop signal is received (analysis for the trial completes)
-def extract_numbers(number_queue, stop_event, serial_number):
-    
-    ftdi = Ftdi()
-    ftdi.open_from_url(f"ftdi://ftdi:232:{serial_number}/1")
-    ftdi.set_latency_timer(FTDI_DEVICE_LATENCY_MS)
-    ftdi.write_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
-    ftdi.read_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
-    number_queue.queue.clear() # clear the queue
+def extract_numbers(number_queue, stop_event):
+    global total_extract_numbers_time
 
+    number_buffer = bytearray()  # buffer for constructing random numbers
+    number_buffer.clear()  # Clear the number_buffer when the function is called
+
+    start_time = time.time()
 
     while not stop_event.is_set():  # while stop event is not triggered
-
         # Request a new random number
         init_comm = b'\x96'
-        ftdi.purge_buffers()
         bytes_txd = ftdi.write_data(init_comm)
 
-        if bytes_txd != len(init_comm):
-            print("%%%% Write Failed!")
-            sys.exit(-1)
+        # Read bytes from the buffer first if possible
+        bytes_to_read = 64
+        dx_data = ftdi.read_data(bytes_to_read)
+        if dx_data:
+            number_buffer.extend(dx_data)  # Add the received data to the number buffer
 
-        # Each number is 8 bytes, so multiplying the value below means we get multiple numbers at once
-        bytes_to_rx = 176 # Change this value to the number of bytes you want to receive (8 to 32)
-        dx_data = ftdi.read_data(bytes_to_rx)
+            # If we have at least 8 bytes in the number buffer, construct random numbers
+            while len(number_buffer) >= 8:
+                number = int.from_bytes(number_buffer[:8], "big")  # Construct the random number
+                number_queue.put(number)  # Put the number into the queue
+                number_buffer = number_buffer[8:]  # Remove the used bytes from the number buffer
 
-        if len(dx_data) != bytes_to_rx:
-            print("%%%% Read Failed!")
-            sys.exit(-1)
+        time.sleep(0.001)  # Sleep for a short time to avoid busy waiting
 
-        for i in range(0, bytes_to_rx, 8):
-            number = int.from_bytes(dx_data[i:i+8], "big") # Stores the int value
-            number_queue.put(number) # put number into queue
-
-    ftdi.close
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    total_extract_numbers_time += elapsed_time  # Update the global variable
 
 
 # Function to analyze subtrials and add to DB write-queue
 def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial):
+    global total_analyze_subtrial_time
+    start_time = time.time()
     subtrial_number = 0
     trial_cum_sv = 0
     trial_weighted_sv = 0
@@ -263,12 +255,21 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial):
 
     stop_event.set() # We processed all subtrials, set the stop event to end extraction
 
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    total_analyze_subtrial_time += elapsed_time  # Update the global variable
+    
     return ()
 
 
 # If DB writing is needed this function is called. It runs in its own thread, uses an async queue, and uses connection pooling
 def write_to_database(data_queue):
+    global total_write_to_database_time
+
     while True:
+        start_time = time.time()
+
         data = data_queue.get()
         if data is None:  # We use None as a sentinel value to indicate that we're done
             break
@@ -297,17 +298,17 @@ def write_to_database(data_queue):
         cursor.close()
         cnx1.close()
 
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        total_write_to_database_time += elapsed_time  # Update the global variable
 
+       
 # Get numbers and process the trial. Uses unique threads for extraction, analyzing, and DB writing
-def process_trial(trial, supertrial, serial_number):
+def process_trial(trial, supertrial, db_queue):
     number_queue = queue.Queue()
-    db_queue = queue.Queue() 
     stop_event = threading.Event()
-
-    extraction_thread = threading.Thread(target=extract_numbers, args=(number_queue, stop_event, serial_number))
+    extraction_thread = threading.Thread(target=extract_numbers, args=(number_queue, stop_event))
     analysis_thread = threading.Thread(target=analyze_subtrial, args=(number_queue, stop_event, db_queue, n, trial, supertrial))
-    db_writer_thread = threading.Thread(target=write_to_database, args=(db_queue,))
-    db_writer_thread.start()
 
     extraction_thread.start()
     analysis_thread.start()
@@ -315,23 +316,33 @@ def process_trial(trial, supertrial, serial_number):
     extraction_thread.join()
     analysis_thread.join()
 
-    db_queue.put(None)  # Signal db_writer to stop
-    db_writer_thread.join()
-
 
 # Main function, loops for trials
 def main():
+
+    db_queue = queue.Queue()  # Initialize the DB queue outside the loop
+    db_writer_thread = threading.Thread(target=write_to_database, args=(db_queue,))
+    db_writer_thread.start()  # Start the DB writer thread
+    
     start_time = time.time()
     supertrial = get_supertrial()
 
     for trial in range(1, trial_count + 1):
-        process_trial(trial, supertrial, serial_number)
+        process_trial(trial, supertrial, db_queue)
+    print('')
+    print(f"Total extract_numbers time: {total_extract_numbers_time:.2f} seconds")
+    print(f"Total analyze_subtrial time: {total_analyze_subtrial_time:.2f} seconds")
+    print(f"Total write_to_database time: {total_write_to_database_time:.2f} seconds")
+
+    db_queue.put(None)  # Signal db_writer to stop
+    db_writer_thread.join()  # Wait for the DB writer thread to finish
 
     end_time = time.time()  # Capture the end time
     elapsed_time = end_time - start_time  # Calculate the elapsed time
-
+    
+    ftdi.close
+    
     final_output(supertrial, elapsed_time, n, trial_count, count_subtrial_per_trial)
-
 
 if __name__ == "__main__":
     main()
