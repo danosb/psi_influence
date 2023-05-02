@@ -18,7 +18,7 @@ from dbutils.pooled_db import PooledDB
 
 
 n = 31 # Defined number of steps required to complete a random walk
-trial_count = 20000 # Number of trials we'll perform
+trial_count = 1000 # Number of trials we'll perform
 count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 
@@ -91,7 +91,7 @@ def get_supertrial():
 def extract_numbers(number_queue, stop_event):
     global total_extract_numbers_time
 
-    number_buffer = bytearray()  # buffer for constructing random numbers
+    number_buffer = bytearray()  # buffer for constructing random numbers, ensures we drop no contiguous bytes
     number_buffer.clear()  # Clear the number_buffer when the function is called
 
     start_time = time.time()
@@ -102,7 +102,7 @@ def extract_numbers(number_queue, stop_event):
         bytes_txd = ftdi.write_data(init_comm)
 
         # Read bytes from the buffer first if possible
-        bytes_to_read = 64
+        bytes_to_read = 32
         dx_data = ftdi.read_data(bytes_to_read)
         if dx_data:
             number_buffer.extend(dx_data)  # Add the received data to the number buffer

@@ -1,5 +1,7 @@
-drop table subtrial_data;
-drop table trial_data;
+DROP TABLE IF EXISTS supertrial_data;
+DROP TABLE IF EXISTS window_data;
+DROP TABLE IF EXISTS subtrial_data;
+DROP TABLE IF EXISTS trial_data;
 
 /* 
     Populate and run in terminal:
@@ -14,6 +16,34 @@ CREATE DATABASE IF NOT EXISTS myDatabase;
 
 USE myDatabase;
 
+CREATE TABLE IF NOT EXISTS supertrial_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supertrial INT,
+    number_steps INT,
+    window_size INT,
+    count_trials_completed INT,
+    significance_threshold FLOAT,
+    moving_avg_window_count INT,
+    min_z_value FLOAT,
+    min_p_value FLOAT,
+    created_datetime DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS window_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supertrial INT,
+    created_by_trial INT,
+    window_z_value FLOAT,
+    window_p_value FLOAT,
+    window_SV FLOAT,
+    window_result_significant BOOLEAN,
+    moving_avg_z FLOAT,
+    moving_avg_p FLOAT,
+    moving_avg_sv FLOAT,
+    moving_avg_result_significant BOOLEAN,
+    created_datetime DATETIME
+);
+
 CREATE TABLE IF NOT EXISTS trial_data (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supertrial INT,
@@ -21,8 +51,9 @@ CREATE TABLE IF NOT EXISTS trial_data (
     trial_cum_sv FLOAT,
     trial_weighted_sv FLOAT,
     trial_norm_weighted_sv FLOAT,
+    p_value FLOAT,
+    z_value FLOAT,
     created_datetime DATETIME
-
 );
 
 CREATE TABLE IF NOT EXISTS subtrial_data (
@@ -45,9 +76,7 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
     c FLOAT,
     p_calculated FLOAT,
     SV FLOAT,
-    created_datetime DATETIME,
-    trial_data_id INT,
-    FOREIGN KEY (trial_data_id) REFERENCES trial_data(id)
+    created_datetime DATETIME
 );
 
 ALTER TABLE trial_data ADD INDEX supertrial_index (supertrial);
