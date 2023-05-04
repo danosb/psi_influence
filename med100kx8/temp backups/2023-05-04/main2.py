@@ -139,7 +139,7 @@ def main():
                 nonoverlapping_window_cum_p = 0.0
 
             # Update feedback window
-            change_cube_properties(window_z, eval('{(1-min_supertrial_p)}'), f"1-{min_supertrial_p}", False)
+            change_cube_properties(window_z, 2, 1, False)
 
             print(f"Trial p: {trial_p}")
             print(f"Trial z: {trial_z}")

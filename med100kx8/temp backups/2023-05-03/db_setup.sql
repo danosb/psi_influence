@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS supertrial_data (
     created_datetime DATETIME
 );
 
-
 CREATE TABLE IF NOT EXISTS window_data (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supertrial INT,
@@ -42,11 +41,6 @@ CREATE TABLE IF NOT EXISTS window_data (
     moving_avg_p FLOAT,
     moving_avg_sv FLOAT,
     moving_avg_result_significant BOOLEAN,
-    nonoverlapping_window_cum_p FLOAT,
-    count_nonoverlapping_window_total INT,
-    count_nonoverlapping_window_significant INT,
-    nonoverlapping_window_p_value FLOAT,
-    nonoverlapping_window_SV FLOAT,
     created_datetime DATETIME
 );
 
