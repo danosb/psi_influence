@@ -14,6 +14,8 @@ from datetime import datetime
 import math
 import os
 from scipy.stats import binomtest
+from multiprocessing import Process, Queue
+import multiprocessing
 from dbutils.pooled_db import PooledDB
 from concurrent.futures import ThreadPoolExecutor
 from graphic import change_cube_properties
@@ -25,7 +27,7 @@ from process_trial import process_trial
 
 
 n = 31 # Defined number of steps required to complete a random walk
-trial_count = 10 # Number of trials we'll perform
+trial_count = 50 # Number of trials we'll perform
 count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
@@ -74,7 +76,6 @@ def main():
     nonoverlapping_window_cum_p = 0.0
     nonoverlapping_window_p_value = 0.0
     nonoverlapping_window_SV = 0.0
-
     window_data = []
     moving_avg_data = []
     min_supertrial_z = float("100")
@@ -87,14 +88,23 @@ def main():
     #draw_cube_thread = threading.Thread(target=draw_cube)
     #draw_cube_thread.start()
 
+    cube_queue = Queue()
+    cube_process = Process(target=draw_cube, args=(cube_queue,))
+    cube_process.start()
+    cube_queue.put((1, 2, "Started"))
+
+    cumulative_time = 0  # Initialize cumulative_time to 0
+    state = {'cumulative_time_above_target': 0}  # Define state dictionary
+
+
     for trial in range(1, trial_count + 1):
         trial_p, trial_z = process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial)
-        
+
         # Update window_data
         if len(window_data) >= window_size:
             window_data.pop(0)
         window_data.append({"trial_p": trial_p, "trial_z": trial_z})
-        
+
         # Calculate window_z, window_p, window_sv, and window_result_significant
         if len(window_data) == window_size:
             total_trial_completed_count = trial
@@ -138,8 +148,9 @@ def main():
             else:
                 nonoverlapping_window_cum_p = 0.0
 
-            # Update feedback window
-            change_cube_properties(window_z, eval('{(1-min_supertrial_p)}'), f"1-{min_supertrial_p}", False)
+            # Update cube window
+            cube_queue.put(((1-(window_p))*(-1), 1 - window_p, f"Moving avg. SV: {moving_avg_window_sv}"))
+
 
             print(f"Trial p: {trial_p}")
             print(f"Trial z: {trial_z}")
@@ -179,6 +190,7 @@ def main():
     print(f"Min z for supertrial: {min_supertrial_z}")
     print(f"Min p for supertrial: {min_supertrial_p}")
     print(f"Total trials executed: {total_trial_completed_count}")
+    print(state['cumulative_time_above_target'])
 
     # Add supertrial data to DB write queue
     data = {
@@ -208,6 +220,9 @@ def main():
     print(f"Complete.")
 
     ftdi.close
+
+    time.sleep(5)  # Wait for 10 seconds
+    cube_process.terminate()  # Terminate the cube process
 
 
 if __name__ == "__main__":
