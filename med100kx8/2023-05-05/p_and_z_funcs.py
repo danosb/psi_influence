@@ -91,7 +91,4 @@ def cdf(window_z):
     # else:
     # window_p = 2 * (1 - window_p)
 
-    # For one-tailed
-    window_p = 1 - window_p
-
     return window_p

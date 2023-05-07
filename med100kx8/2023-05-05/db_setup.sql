@@ -23,7 +23,9 @@ CREATE TABLE IF NOT EXISTS supertrial_data (
     window_size INT,
     count_trials_completed INT,
     significance_threshold FLOAT,
-    participant_name VARCHAR(255),
+    moving_avg_window_count INT,
+    min_z_value FLOAT,
+    min_p_value FLOAT,
     created_datetime DATETIME
 );
 
@@ -36,10 +38,15 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_p_value FLOAT,
     window_SV FLOAT,
     window_result_significant BOOLEAN,
-    count_window_total INT,
-    count_window_hit INT,
-    window_total_p FLOAT,
-    window_total_SV FLOAT,
+    moving_avg_z FLOAT,
+    moving_avg_p FLOAT,
+    moving_avg_sv FLOAT,
+    moving_avg_result_significant BOOLEAN,
+    nonoverlapping_window_cum_p FLOAT,
+    count_nonoverlapping_window_total INT,
+    count_nonoverlapping_window_significant INT,
+    nonoverlapping_window_p_value FLOAT,
+    nonoverlapping_window_SV FLOAT,
     created_datetime DATETIME
 );
 

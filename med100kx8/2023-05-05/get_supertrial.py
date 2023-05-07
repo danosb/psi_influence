@@ -24,6 +24,8 @@ def get_supertrial(mysql_pool):
         else:
             supertrial = 1
 
+        print(f"supertrial:", (supertrial))
+
         return supertrial
 
         # Close the cursor and connection

@@ -4,20 +4,15 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import numpy as np
-import os
-import pygame.mixer
 
-current_sound = None
 
 # Defaults
 state = {
     'rotation_speed': 1,
     'fill_percentage': 0.5,
     'text': "Loading..",
-    'time_remaining': 0,
     'timer': 0,
     'cumulative_time_above_target': 0,
-    'window_result_significant': False,
 }
 
 
@@ -70,44 +65,22 @@ def draw_text(position, text_string):
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ord(character))
 
 
-# update_state
-def change_cube_properties(new_rotation_speed, new_fill_percentage, new_text, passed_time_remaining, close_window=False):
+# update_state({'rotation_speed': 2, 'fill_percentage': 0.7, 'text': "New Text"})
+def change_cube_properties(new_rotation_speed, new_fill_percentage, new_text, close_window=False):
     global state  # Add this line to access the global state variable
 
     state['rotation_speed'] = new_rotation_speed
     state['fill_percentage'] = new_fill_percentage
     state['text'] = new_text
-    state['time_remaining'] = passed_time_remaining
 
-    play_mp3(new_rotation_speed)
-
-    # Calculate the new value of cumulative_time_above_target
-    cumulative_time_above_target = state.get('cumulative_time_above_target', 0)
-    state['cumulative_time_above_target'] = cumulative_time_above_target
-
-    # Return the new value of cumulative_time_above_target
-    return cumulative_time_above_target
-
-
-def play_mp3(rotation_speed):
-    global current_sound
-    mp3_path = os.path.dirname(os.path.abspath(__file__))  # Get the current script directory
-
-    # print(f'Rotation speed: {rotation_speed}')
-    freq = int(100 + abs(rotation_speed) * 100)
-
-    freq_str = str(freq).zfill(2)  # Pad with zeros on the left
-    file_name = f"{freq_str}Hz.mp3"
-    file_path = os.path.join(mp3_path, "mp3", file_name)
-    if current_sound is not None:
-        current_sound.stop()
-    current_sound = pygame.mixer.Sound(file_path)
-    current_sound.play()
 
     
+    if close_window:
+        stop_main_loop()
 
+        
 def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0.95):
-    global state, cumulative_time_above_target, time_remaining
+    global state, cumulative_time_above_target
 
     min_color = (0, 0, 255)  # Blue color
     max_color = (0, 255, 0)  # Green color
@@ -117,8 +90,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0
     target_y = y + int(height * target_height)  # Calculate y-coordinate of target line
 
     cumulative_time_above_target = state.get('cumulative_time_above_target', 0)  # Get current cumulative time above target
-    time_remaining = state.get('time_remaining', 0)  # Get current cumulative time above target
-    
+
     if fill_height >= target_y - y:
         cumulative_time_above_target += 1/60  # Increase cumulative time by 1 second / 60 frames per second
         fill_color = max_color
@@ -163,38 +135,22 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0
     # Draw cumulative time above target label
     cumulative_time_label = f"Total time above target: {cumulative_time_above_target:.2f}s"
     glColor3f(0, 0, 0)  # Set text color to black
-    x_offset = 15  # Offset from left border of screen
+    x_offset = 10  # Offset from left border of screen
     y_offset = 570 # Offset from top border of screen
     draw_text((x_offset, y_offset), cumulative_time_label)
 
-    # Draw cumulative time above target label
-    time_remaining_minutes = int((time_remaining+1) // 60)
-    time_remaining_seconds = int((time_remaining+1) % 60)
-    time_remaining_label = f"Time remaining: {time_remaining_minutes:02d}:{time_remaining_seconds:02d}"
-    glColor3f(0, 0, 0)  # Set text color to black
-    x_offset = 555  # Offset from left border of screen
-    y_offset = 570 # Offset from top border of screen
-    draw_text((x_offset, y_offset), time_remaining_label)
-
-
     # Update state with new cumulative time
     state['cumulative_time_above_target'] = cumulative_time_above_target
-
-    state['time_remaining'] = time_remaining
-
 
     # Return cumulative time
     return cumulative_time_above_target
 
 
+
+
 def draw_cube(queue):
     global state
-    global cumulative_time_above_target
-
     pygame.init()
-    pygame.mixer.init()  # Initialize the mixer
-    pygame.mixer.set_num_channels(1)  # Set the number of channels
-
     display = (800, 600)
     screen = pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
@@ -212,7 +168,7 @@ def draw_cube(queue):
 
         if not queue.empty():
             new_properties = queue.get()
-            change_cube_properties(*new_properties[:])  # Pass only the first four elements
+            change_cube_properties(*new_properties)
 
         glRotatef(state['rotation_speed'], 1, 0, 0)  # Rotate the cube vertically
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -225,9 +181,8 @@ def draw_cube(queue):
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        draw_text((15, 15), state['text'])  # Bottom left text position
+        draw_text((10, 15), state['text']) # Bottom left text position 
         draw_gradient_fill_bar(700, 100, 80, 400, state['fill_percentage'])
-        
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
         glMatrixMode(GL_MODELVIEW)
@@ -235,6 +190,3 @@ def draw_cube(queue):
 
         pygame.display.flip()
         clock.tick(60)
-
-
-
