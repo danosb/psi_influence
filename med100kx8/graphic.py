@@ -74,7 +74,7 @@ def draw_text(position, text_string):
 def change_cube_properties(new_rotation_speed, new_fill_percentage, new_text, passed_time_remaining, close_window=False):
     global state  # Add this line to access the global state variable
 
-    state['rotation_speed'] = new_rotation_speed
+    state['rotation_speed'] = new_rotation_speed * 3
     state['fill_percentage'] = new_fill_percentage
     state['text'] = new_text
     state['time_remaining'] = passed_time_remaining
@@ -118,7 +118,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0
 
     cumulative_time_above_target = state.get('cumulative_time_above_target', 0)  # Get current cumulative time above target
     time_remaining = state.get('time_remaining', 0)  # Get current cumulative time above target
-    
+
     if fill_height >= target_y - y:
         cumulative_time_above_target += 1/60  # Increase cumulative time by 1 second / 60 frames per second
         fill_color = max_color

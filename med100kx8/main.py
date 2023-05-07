@@ -100,11 +100,12 @@ def main():
         if len(window_data) >= window_size:
             window_data.pop(0)
         window_data.append({"trial_p": trial_p, "trial_z": trial_z})
+        total_trial_completed_count = trial
+        trial += 1
 
         # Calculate window_z, window_p, window_sv, and window_result_significant
-        if len(window_data) == window_size:
+        if len(window_data) == window_size and (trial - 1) % window_size == 0:
 
-            total_trial_completed_count = trial
             window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size)
             window_p = cdf(window_z)
             window_sv = math.log2(1 / window_p)
@@ -134,7 +135,7 @@ def main():
             data = {
                 'table': 'window_data',
                 'supertrial': supertrial,
-                'created_by_trial': trial,
+                'created_by_trial': trial-1,
                 'window_z_value': window_z,
                 'window_p_value': window_p,
                 'window_SV': window_sv,
@@ -147,7 +148,7 @@ def main():
             }
             db_queue.put(data)
 
-            trial += 1
+     
     
     # Send stop signal to graphic window
     cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time), True)
