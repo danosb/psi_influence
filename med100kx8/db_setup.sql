@@ -82,12 +82,28 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
 
 ALTER TABLE trial_data ADD INDEX supertrial_index (supertrial);
 
+    trial INT,
+    subtrial_number INT,
+    int_array TEXT,
+    bidirectional_count INT,
+    bidirectional_is_pos BOOLEAN,
+    number_steps INT,
+    x1 FLOAT,
+    x2 FLOAT,
+    x3 FLOAT,
+    y1 FLOAT,
+    y2 FLOAT,
+    y3 FLOAT,
+    a FLOAT,
+    b FLOAT,
+    c FLOAT,
+    p_calculated FLOAT,
+    SV FLOAT,
 
 
 
 
-
-select 
+select
       s.supertrial as 'Supertrial ID'
     , s.number_steps as 'Configured n bound'
     , s.window_size as 'Configured window size'

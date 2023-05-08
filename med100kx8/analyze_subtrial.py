@@ -43,6 +43,12 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
                 if(bidirectional_count) > 0:
                     bidirectional_is_pos = True
 
+                # from Scott: If N < 207, set N = 207 or if N > 1609, set N = 1609. This will make the range of weights (SVs) from about 4 to 0.25, a 16 to one range.
+                if number_steps < 207:
+                    number_steps = 207
+                if number_steps > 1609:
+                    number_steps = 1609
+
                 # Find x1, y1, x2, y2, x3, and y3 by checking for the first x-value greater than or equal to number_steps
                 for i, (x, _) in enumerate(N_CDF_vals):
                     if x >= number_steps:
