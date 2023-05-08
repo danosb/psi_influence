@@ -31,7 +31,7 @@ count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
 significance_threshold = 0.05 # p-value significance
-duration_seconds = 60 # Number of seconds the supertrial will last
+duration_seconds = 30 # Number of seconds the supertrial will last
 participant_name = "Dan"
 
 
@@ -76,7 +76,6 @@ def main():
     count_window_total = 0
     window_total_p = 0.0
     window_total_SV = 0.0
-    window_total_reached_target = 0
     window_data = []
     trial = 1
 
@@ -119,16 +118,18 @@ def main():
             window_total_p = binomtest(count_window_hit, count_window_total, 0.5, alternative='greater').pvalue
             window_total_SV = math.log2(1 / window_total_p)
 
-            if window_total_p <= significance_threshold:
-                window_total_reached_target += 1
-
-            print(f"...")
             print(f"Last window p-value: {window_p}")
-            print(f"Last window surprisal value: {window_sv}")
-            print(f"Window count hits: {count_window_hit} / {count_window_total} = {count_window_hit/count_window_total*100:.2f}%")
-            print(f"Overall window p-value: {window_total_p}")
-            print(f"Overall window surprisal value: {window_total_SV}")
-            print(f"Window count overall p-value reached target: {window_total_reached_target} / {count_window_total} = {window_total_reached_target/count_window_total*100:.2f}%")
+            print(f"Last window surprival value: {window_sv}")
+            print(f"Window count total: {count_window_total}")
+            print(f"Window count hits: {count_window_hit}")
+            print(f"Overall Window p-value: {window_total_p}")
+            print(f"Overall Window surprival value: {window_total_SV}")
+
+            end_time = time.time()  # Capture the end time
+            elapsed_time = end_time - start_time  # Calculate the elapsed time
+
+            # Update cube window
+            cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
 
             # Add window data to DB write queue
             data = {
@@ -143,17 +144,11 @@ def main():
                 'count_window_hit': count_window_hit,
                 'window_total_p': window_total_p,
                 'window_total_SV': window_total_SV,
-                'window_total_reached_target': window_total_reached_target,
                 'created_datetime': datetime.now()
             }
             db_queue.put(data)
 
-            end_time = time.time()  # Capture the end time
-            elapsed_time = end_time - start_time  # Calculate the elapsed time
-
-            # Update cube window
-            cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
-
+     
     
     # Send stop signal to graphic window
     cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time), True)
@@ -165,8 +160,6 @@ def main():
         'count_trials_completed': total_trial_completed_count,
         'number_steps': n,
         'window_size': window_size,
-        'duration_seconds': duration_seconds,
-        'count_subtrial_per_trial': count_subtrial_per_trial,
         'significance_threshold': significance_threshold,
         'participant_name': participant_name,
         'created_datetime': datetime.now()

@@ -104,6 +104,7 @@ def play_mp3(rotation_speed):
     current_sound = pygame.mixer.Sound(file_path)
     current_sound.play()
 
+    
 
 def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0.95):
     global state, cumulative_time_above_target, time_remaining
@@ -160,7 +161,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0
     draw_text((x + x_offset, target_y - y_offset), target_label)
 
     # Draw cumulative time above target label
-    cumulative_time_label = f"Total time above target: {cumulative_time_above_target-0.02:.2f}s"
+    cumulative_time_label = f"Total time above target: {cumulative_time_above_target:.2f}s"
     glColor3f(0, 0, 0)  # Set text color to black
     x_offset = 15  # Offset from left border of screen
     y_offset = 570 # Offset from top border of screen
@@ -168,7 +169,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, target_height=0
 
     # Draw cumulative time above target label
     time_remaining_minutes = int((time_remaining+1) // 60)
-    time_remaining_seconds = int((time_remaining+1) % 60) 
+    time_remaining_seconds = int((time_remaining+1) % 60)
     time_remaining_label = f"Time remaining: {time_remaining_minutes:02d}:{time_remaining_seconds:02d}"
     glColor3f(0, 0, 0)  # Set text color to black
     x_offset = 555  # Offset from left border of screen
