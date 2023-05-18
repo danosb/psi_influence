@@ -1,6 +1,6 @@
 # Pulls number from a random number generator, analyzes, stores to database
-# Uses Scott Wilber's Random Walk Bias Amplification algorithm:
-# ..https://drive.google.com/file/d/1ASvbdI-uQs_4HNL3fh85g72mIRndkjdn/view
+# Provides real-time feedback about mental influence exerted
+# Stores a variety of secondary data, all stored to database
 
 import queue
 import random
@@ -18,12 +18,14 @@ from multiprocessing import Process, Queue
 import multiprocessing
 from dbutils.pooled_db import PooledDB
 from concurrent.futures import ThreadPoolExecutor
-from graphic import change_cube_properties
-from graphic import draw_cube
+from graphic import change_cube_properties,  draw_cube
 from get_supertrial import get_supertrial
 from write_to_database import write_to_database
 from p_and_z_funcs import cdf
 from process_trial import process_trial
+from get_dst import get_dst
+from get_kp import get_kp
+from participant import participant_info    
 
 
 n = 31 # Defined number of steps required to complete a random walk
@@ -31,8 +33,7 @@ count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
 significance_threshold = 0.05 # p-value significance
-duration_seconds = 600 # Number of seconds the supertrial will last
-participant_name = "Dan"
+duration_seconds = 15 # Number of seconds the supertrial will last
 
 
 # Device communication parameters
@@ -66,11 +67,11 @@ mysql_pool = PooledDB(
 
 # Main function, loops for trials
 def main():
+    # Initialize stuff
     db_queue = queue.Queue()  # Initialize the DB queue outside the loop
     db_writer_thread = threading.Thread(target=write_to_database, args=(mysql_pool, db_queue,))
     db_writer_thread.start()  # Start the DB writer thread
-    trial_p = 0.0
-    trial_z = 0.0
+    trial_p, trial_z = 0.0, 0.0
     total_trial_completed_count = 0
     count_window_hit = 0
     count_window_total = 0
@@ -79,10 +80,47 @@ def main():
     window_total_reached_target = 0
     window_data = []
     trial = 1
-
+    
     start_time = time.time()
     time_remaining = duration_seconds
     supertrial = get_supertrial(mysql_pool)
+    dst_index = get_dst() # Dst-index
+    kp_index, BSR, ap_big, ap_small, SN, F10_7obs, F10_7adj = get_kp() # Other solar data
+
+    # Add solar data to DB write queue
+    data = {
+        'table': 'solar_data',
+        'supertrial': supertrial,
+        'dst_index': dst_index,
+        'kp_index': kp_index,
+        'BSR': BSR,
+        'ap_small': ap_small,
+        'ap_big': ap_big,
+        'SN': SN,
+        'F10_7obs': F10_7obs,
+        'F10_7adj': F10_7adj,
+        'created_datetime': datetime.now()
+    }
+    db_queue.put(data)
+
+
+    participant_name, age, gender, feeling, energy_level, focus_level, meditated, technique_description = participant_info()
+    
+    data = {
+        'table': 'participant',
+        'supertrial': supertrial,
+        'participant_name': participant_name,
+        'age': age,
+        'gender': gender,
+        'feeling': feeling,
+        'energy_level': energy_level,
+        'focus_level': focus_level,
+        'meditated': meditated,
+        'technique_description': technique_description,
+        'created_datetime': datetime.now()
+    }
+    db_queue.put(data)
+
     elapsed_time = 0 
 
     cube_queue = Queue()
@@ -168,7 +206,6 @@ def main():
         'duration_seconds': duration_seconds,
         'count_subtrial_per_trial': count_subtrial_per_trial,
         'significance_threshold': significance_threshold,
-        'participant_name': participant_name,
         'created_datetime': datetime.now()
     }
     db_queue.put(data)    
@@ -178,7 +215,11 @@ def main():
     print(f"...")
     print(f"Total time taken: {elapsed_time:.2f} seconds")
     print(f"Total trials executed: {total_trial_completed_count}")
-    print(f"Average time per trial: {elapsed_time / total_trial_completed_count * 1000:.2f} milliseconds")
+    
+    if total_trial_completed_count != 0:
+        print(f"Average time per trial: {elapsed_time / total_trial_completed_count * 1000:.2f} milliseconds")
+    else:
+        print("No trials completed.")
     print(f"...")
     #cumulative_time_above_target = state.get('cumulative_time_above_target', 0)
     

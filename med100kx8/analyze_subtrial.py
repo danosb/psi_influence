@@ -1,3 +1,6 @@
+# Uses Scott Wilber's Random Walk Bias Amplification algorithm:
+# ..https://drive.google.com/file/d/1ASvbdI-uQs_4HNL3fh85g72mIRndkjdn/view
+
 import queue
 import json
 from datetime import datetime

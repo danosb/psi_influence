@@ -1,4 +1,6 @@
 DROP TABLE IF EXISTS supertrial_data;
+DROP TABLE IF EXISTS participant;
+DROP TABLE IF EXISTS solar_data;
 DROP TABLE IF EXISTS window_data;
 DROP TABLE IF EXISTS subtrial_data;
 DROP TABLE IF EXISTS trial_data;
@@ -25,7 +27,20 @@ CREATE TABLE IF NOT EXISTS supertrial_data (
     window_size INT,
     count_trials_completed INT,
     significance_threshold FLOAT,
+    created_datetime DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS participant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supertrial INT,
     participant_name VARCHAR(255),
+    age INT,
+    gender VARCHAR(255),
+    feeling INT,
+    energy_level INT,
+    focus_level INT,
+    meditated BOOLEAN,
+    technique_description VARCHAR(255),
     created_datetime DATETIME
 );
 
@@ -42,6 +57,20 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_total_p FLOAT,
     window_total_SV FLOAT,
     window_total_reached_target INT,
+    created_datetime DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS solar_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supertrial INT,
+    dst_index INT,
+    kp_index FLOAT,
+    BSR INT,
+    ap_small INT,
+    ap_big INT,
+    SN INT,
+    F10_7obs FLOAT,
+    F10_7adj FLOAT,
     created_datetime DATETIME
 );
 
