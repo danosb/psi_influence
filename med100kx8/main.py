@@ -104,7 +104,7 @@ def main():
     db_queue.put(data)
 
 
-    participant_name, age, gender, feeling, energy_level, focus_level, meditated, technique_description = participant_info()
+    participant_name, age, gender, feeling, energy_level, focus_level, meditated, eaten_recently, technique_description = participant_info()
     
     data = {
         'table': 'participant',
@@ -116,6 +116,7 @@ def main():
         'energy_level': energy_level,
         'focus_level': focus_level,
         'meditated': meditated,
+        'eaten_recently': eaten_recently,
         'technique_description': technique_description,
         'created_datetime': datetime.now()
     }

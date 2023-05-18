@@ -46,6 +46,14 @@ def participant_info():
         meditated_input = input("Did you meditate directly before the experiment today? (Y/N): ")
 
     meditated = True if meditated_input.upper() == "Y" else False
+    print(f'')
+
+    eaten_input = ""
+    while eaten_input.upper() not in ["Y", "N"]:
+        eaten_input = input("Have you eaten within the last 90 minutes? (Y/N): ")
+
+    eaten = True if eaten_input.upper() == "Y" else False
+    print(f'')
 
     technique_mapping = {
         1: "Visualization",
@@ -61,8 +69,6 @@ def participant_info():
 
 
     # Print technique mappings
-    print(f'')
-
     print("Technique Options:")
     for key, value in technique_mapping.items():
         print(key, ": ", value)
@@ -79,6 +85,7 @@ def participant_info():
     technique_description = technique_mapping.get(technique)
     print(f'')
     print(f'Thank you, starting trial now...')
+    print(f'')
 
     # Print the entered information
     #print("\nEntered Information:")
@@ -90,4 +97,4 @@ def participant_info():
     #print("Meditated:", meditated)
     #print("Technique:", technique_description)
 
-    return name, age, gender, feeling, energy_level, focus_level, meditated, technique_description
+    return name, age, gender, feeling, energy_level, focus_level, meditated, eaten, technique_description

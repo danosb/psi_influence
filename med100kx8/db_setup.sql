@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS participant (
     energy_level INT,
     focus_level INT,
     meditated BOOLEAN,
+    eaten_recently BOOLEAN,
     technique_description VARCHAR(255),
     created_datetime DATETIME
 );
