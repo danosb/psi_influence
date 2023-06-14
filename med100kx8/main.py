@@ -33,7 +33,7 @@ count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
 significance_threshold = 0.05 # p-value significance
-duration_seconds = 15 # Number of seconds the supertrial will last
+duration_seconds = 60 # Number of seconds the supertrial will last
 
 
 # Device communication parameters
@@ -103,7 +103,7 @@ def main():
     }
     db_queue.put(data)
 
-
+    # Prompt for participant info
     participant_name, age, gender, feeling, energy_level, focus_level, meditated, eaten_recently, technique_description = participant_info()
     
     data = {

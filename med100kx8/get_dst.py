@@ -6,7 +6,12 @@ import datetime
 from pytz import timezone
 
 def get_dst():
-    url = "https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/dst2305.for.request"
+    now = datetime.datetime.now(timezone('UTC'))
+
+    year_str = str(now.year)[-2:] # get the last two digits of the current year
+    month_str = str(now.month).zfill(2) # get the current month and pad with zero if necessary
+
+    url = f"https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/dst{year_str}{month_str}.for.request"
 
     response = requests.get(url)
     data = response.text.split('\n')
@@ -32,6 +37,9 @@ def get_dst():
     # Get start and end position for value
     start = index_dict[current_hour]
     end = start + 4
+    
+    # assign a default value to value
+    value = None
 
     # Read values
     for row in data:
@@ -47,5 +55,9 @@ def get_dst():
             value = row[start:end].strip()
             # print(f"The value for hour {current_hour} on day {current_day} is {value}")
             break
+            
+    # Check if value is still None (which means the loop ended without finding a match)
+    if value is None:
+        raise ValueError(f"No data found for hour {current_hour} on day {current_day}")
             
     return value

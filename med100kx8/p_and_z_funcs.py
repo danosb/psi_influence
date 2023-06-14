@@ -4,28 +4,31 @@ import math
 # Returns the trial_p value from the normalized weighted surprival value (nwsv) from 21 sub-trials with n = 31; The input range is -1 to +1 and the default output range is approximately: 0.0001 < p < 0.9999.
 # Note, this is a two-tailed test, meaning if the nwsv is negative, take the p returned by the function above. If the nwsv is positive, the actual p value is 1-p returned by the function. If you were using the trial by itself, each of the p values would be doubled for the two-tailed statistic. For combining into a windowp, take the p values returned by the function without subtracting from 1 or doubling them.
 def trialp_from_nwsv(nwsv):
-    if nwsv < -0.916:
-        x = -0.916
-    elif nwsv > 0.916:
-        x = 0.916
+
+    if nwsv < -0.95:
+        x = -0.95
+    elif nwsv > 0.95:
+        x = 0.95
     else:
         x = nwsv
 
-    trial_p = (
-        0.4999447235559293
-        + 1.2528465672038636 * x
-        + 0.0023748498254079604 * x ** 2
-        - 1.8238870199248776 * x ** 3
-        - 0.01775000187777237 * x ** 4
-        + 1.9836743245635038 * x ** 5
-        + 0.05445147471824477 * x ** 6
-        - 1.3540283379808826 * x ** 7
-        - 0.08206132973167951 * x ** 8
-        + 0.5389043846181366 * x ** 9
-        + 0.060502652558113074 * x ** 10
-        - 0.09752931591747523 * x ** 11
-        - 0.01746939645456147 * x ** 12
-    )
+    x = -abs(nwsv)
+    xx = 1.3671649364575*x \
+    + 0.043433149991109*x**2 \
+    - 2.16454907883120*x**3 \
+    - 1.16398609859974*x**4 \
+    - 15.9478516592348*x**5 \
+    - 86.4404062808434*x**6 \
+    - 201.9161410163*x**7 \
+    - 265.2908149166*x**8 \
+    - 205.91445301453*x**9 \
+    - 88.495808283824*x**10 \
+    - 16.271768076703*x**11 \
+
+    if nwsv < 0:
+        trial_p = 0.5 + xx
+    else:
+        trial_p = 0.5 - xx
 
     # Open question if doing two-tailed:
     # "two-tailed test, meaning if the nwtv is negative, take the p returned by the function above. If the nwtv is positive, the actual p value is 1-p returned by the function. If you were using the trial by itself (which I know is not your plan), each of the p values would be doubled for the two-tailed statistic. For combining into a windowp, take the p values returned by the function without subtracting from 1 or doubling them.
