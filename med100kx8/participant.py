@@ -61,7 +61,6 @@ def participant_info():
         2: "Produce more 1s",
         3: "Alternate between producing more 0s and more 1s"
     }
-    print(f'')
 
     # Print technique mappings
     print("Influence Options:")
@@ -71,7 +70,7 @@ def participant_info():
     
     influence = int(input("What direction of influence? (Enter the corresponding number): "))
     print(f'')
-    
+
     # Input validation for technique (integer within a valid range)
     while influence not in influence_mapping.keys():
         print("Invalid input. Please enter a valid technique number.")

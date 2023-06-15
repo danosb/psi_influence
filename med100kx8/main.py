@@ -33,7 +33,7 @@ count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
 significance_threshold = 0.05 # p-value significance
-duration_seconds = 60 # Number of seconds the supertrial will last
+duration_seconds = 30 # Number of seconds the supertrial will last
 
 
 # Device communication parameters
@@ -82,8 +82,7 @@ def main():
     influence_type = ''
     trial = 1
     
-    start_time = time.time()
-    time_remaining = duration_seconds
+
     supertrial = get_supertrial(mysql_pool)
     dst_index = get_dst() # Dst-index
     kp_index, BSR, ap_big, ap_small, SN, F10_7obs, F10_7adj = get_kp() # Other solar data
@@ -123,6 +122,8 @@ def main():
     }
     db_queue.put(data)
 
+    start_time = time.time()
+    time_remaining = duration_seconds
     elapsed_time = 0 
 
     cube_queue = Queue()

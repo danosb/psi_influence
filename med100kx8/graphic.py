@@ -194,6 +194,7 @@ def draw_cube(queue):
 
     pygame.init()
     pygame.mixer.init()  # Initialize the mixer
+    pygame.display.set_caption("Mental Influence Experiment")
     pygame.mixer.set_num_channels(1)  # Set the number of channels
 
     display = (800, 600)
