@@ -79,6 +79,7 @@ def main():
     window_total_SV = 0.0
     window_total_reached_target = 0
     window_data = []
+    influence_type = ''
     trial = 1
     
     start_time = time.time()
@@ -104,7 +105,7 @@ def main():
     db_queue.put(data)
 
     # Prompt for participant info
-    participant_name, age, gender, feeling, energy_level, focus_level, meditated, eaten_recently, technique_description = participant_info()
+    participant_name, age, gender, feeling, energy_level, focus_level, meditated, eaten_recently, technique_description, influence_type = participant_info()
     
     data = {
         'table': 'participant',
@@ -134,7 +135,7 @@ def main():
 
     while (time.time() - start_time) < duration_seconds:
     
-        trial_p, trial_z = process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial)
+        trial_p, trial_z = process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial, influence_type)
 
         # Update window_data
         if len(window_data) >= window_size:
@@ -190,8 +191,18 @@ def main():
             end_time = time.time()  # Capture the end time
             elapsed_time = end_time - start_time  # Calculate the elapsed time
 
-            # Update cube window
-            cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
+            # Update cube window for one-tailed-1s
+            if influence_type == 'Produce more 1s': 
+                cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
+            
+            # Update cube window for one-tailed-0s
+            if influence_type == 'Produce more 0s':
+                cube_queue.put(((1-window_total_p), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
+
+            # Update cube window for two-tailed
+            if influence_type == 'Alternate between producing more 0s and more 1s': 
+                cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
+            
 
     
     # Send stop signal to graphic window
@@ -202,6 +213,7 @@ def main():
         'table': 'supertrial_data',
         'supertrial': supertrial,
         'count_trials_completed': total_trial_completed_count,
+        'influence_type': influence_type,
         'number_steps': n,
         'window_size': window_size,
         'duration_seconds': duration_seconds,

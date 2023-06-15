@@ -21,6 +21,7 @@ USE myDatabase;
 CREATE TABLE IF NOT EXISTS supertrial_data (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supertrial INT,
+    influence_type VARCHAR(255),
     number_steps INT,
     count_subtrial_per_trial INT,
     duration_seconds INT,

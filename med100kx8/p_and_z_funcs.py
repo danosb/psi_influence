@@ -2,8 +2,7 @@ import math
 
 
 # Returns the trial_p value from the normalized weighted surprival value (nwsv) from 21 sub-trials with n = 31; The input range is -1 to +1 and the default output range is approximately: 0.0001 < p < 0.9999.
-# Note, this is a two-tailed test, meaning if the nwsv is negative, take the p returned by the function above. If the nwsv is positive, the actual p value is 1-p returned by the function. If you were using the trial by itself, each of the p values would be doubled for the two-tailed statistic. For combining into a windowp, take the p values returned by the function without subtracting from 1 or doubling them.
-def trialp_from_nwsv(nwsv):
+def trialp_from_nwsv(nwsv, influence_type):
 
     if nwsv < -0.95:
         x = -0.95
@@ -27,12 +26,16 @@ def trialp_from_nwsv(nwsv):
 
     if nwsv < 0:
         trial_p = 0.5 + xx
-    else:
+    if nwsv > 0:
         trial_p = 0.5 - xx
 
-    # Open question if doing two-tailed:
-    # "two-tailed test, meaning if the nwtv is negative, take the p returned by the function above. If the nwtv is positive, the actual p value is 1-p returned by the function. If you were using the trial by itself (which I know is not your plan), each of the p values would be doubled for the two-tailed statistic. For combining into a windowp, take the p values returned by the function without subtracting from 1 or doubling them.
-    # .. so we perform operations or we don't?
+    if influence_type == 'Produce more 1s':
+        trial_p = 1 - trial_p
+
+    if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s':
+        trial_p = 2 * trial_p
+    if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s':    
+        trial_p = 1 - (2 * trial_p)
 
     return trial_p
 
@@ -86,15 +89,11 @@ def cdf(window_z):
     y = 1.0 / t
     window_p = 0.5 + w * (0.5 - (c2 + (c6 + c5 * t + c4 * t ** 2 + c3 * t ** 3) / t ** 4) / (c1 * math.exp(0.5 * window_z ** 2) * t))
     
-    # Uncomment if two-tailed
     # If the window_p value is less than 0.5, double the p value and that is the windowp value for a result of -1
     # If the window_p value is greater than (or =) 0.5, the windowp value is 2(1-p) for a result of +1.
-    # if window_p < 0.5:
-    #     window_p = window_p * 2
-    # else:
-    # window_p = 2 * (1 - window_p)
-
-    # For one-tailed
-    window_p = 1 - window_p
+    if window_p < 0.5:
+        window_p = window_p * 2
+    else:
+        window_p = 2 * (1 - window_p)
 
     return window_p

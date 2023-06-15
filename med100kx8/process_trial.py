@@ -17,7 +17,7 @@ from p_and_z_funcs import trialp_from_nwsv, invnorm
 
 
 # Get numbers and process the trial. Uses unique threads for extraction, analyzing, and DB writing
-def process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial):
+def process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial, influence_type):
     number_queue = queue.Queue()
     stop_event = threading.Event()
     
@@ -30,7 +30,7 @@ def process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial
        
         trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv = analysis_thread.result()
 
-    trial_p = trialp_from_nwsv(trial_norm_weighted_sv)
+    trial_p = trialp_from_nwsv(trial_norm_weighted_sv, influence_type)
     trial_z = invnorm(trial_p)
 
     # Add trial data to the DB write queue

@@ -55,6 +55,32 @@ def participant_info():
     eaten = True if eaten_input.upper() == "Y" else False
     print(f'')
 
+
+    influence_mapping = {
+        1: "Produce more 0s",
+        2: "Produce more 1s",
+        3: "Alternate between producing more 0s and more 1s"
+    }
+    print(f'')
+
+    # Print technique mappings
+    print("Influence Options:")
+    for key, value in influence_mapping.items():
+        print(key, ": ", value)
+    print(f'')
+    
+    influence = int(input("What direction of influence? (Enter the corresponding number): "))
+    print(f'')
+    
+    # Input validation for technique (integer within a valid range)
+    while influence not in influence_mapping.keys():
+        print("Invalid input. Please enter a valid technique number.")
+        influence = int(input("What direction of influence? (Enter the corresponding number): "))
+
+    # Retrieve the technique description based on the entered number
+    influence_description = influence_mapping.get(influence)
+
+
     technique_mapping = {
         1: "Visualization",
         2: "Attempt to identify/merge with the device or process",
@@ -97,4 +123,4 @@ def participant_info():
     #print("Meditated:", meditated)
     #print("Technique:", technique_description)
 
-    return name, age, gender, feeling, energy_level, focus_level, meditated, eaten, technique_description
+    return name, age, gender, feeling, energy_level, focus_level, meditated, eaten, technique_description, influence_description
