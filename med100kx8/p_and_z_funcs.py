@@ -35,7 +35,7 @@ def trialp_from_nwsv(nwsv, influence_type):
     if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s':
         trial_p = 2 * trial_p
     if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s':    
-        trial_p = 1 - (2 * trial_p)
+        trial_p = 2 * (1 - trial_p)
 
     return trial_p
 

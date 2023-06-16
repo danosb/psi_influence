@@ -202,7 +202,7 @@ def main():
 
             # Update cube window for two-tailed
             if influence_type == 'Alternate between producing more 0s and more 1s': 
-                cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
+                cube_queue.put(((2*(.5-window_total_p)), 2*abs(.5-window_total_p), f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time))
             
 
     
