@@ -32,4 +32,4 @@ Uses USB Mind-Enabled Devices (MED) from Core Invention as the QRNG source.
 ## Running
 
 ```$ python3 main.py```\
-![Screenshot](med100kx8/screenshot.png)
+![Screenshot](screenshot.png)
