@@ -29,12 +29,12 @@ def trialp_from_nwsv(nwsv, influence_type):
     if nwsv > 0:
         trial_p = 0.5 - xx
 
-    if influence_type == 'Produce more 1s':
+    if influence_type == 'Produce more 1s (time-bound)':
         trial_p = 1 - trial_p
 
-    if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s':
+    if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s (continuous)':
         trial_p = 2 * trial_p
-    if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s':    
+    if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s (continuous)':    
         trial_p = 2 * (1 - trial_p)
 
     return trial_p

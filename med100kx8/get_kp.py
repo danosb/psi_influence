@@ -55,11 +55,11 @@ def get_kp():
                                 break
 
                     Ap = line[130:134].strip()
-                    if Ap and float(Ap) != -1.0 and values_dict['Ap'] == '':
+                    if Ap  and values_dict['Ap'] == '':
                         values_dict['Ap'] = Ap
 
                     SN = line[135:138].strip()
-                    if SN and float(SN) != -1.0 and values_dict['SN'] == '':
+                    if SN and values_dict['SN'] == '':
                         values_dict['SN'] = SN
 
                     F107obs = line[139:147].strip()
@@ -78,6 +78,7 @@ def get_kp():
             if month: values_dict['month'] = month
             if day: values_dict['day'] = day
 
-    # print(values_dict)
+    print(values_dict)
+    
     
     return values_dict['Kp'], values_dict['BSR'], values_dict['Ap'], values_dict['Ap'], values_dict['SN'], values_dict['F10.7obs'], values_dict['F10.7adj']

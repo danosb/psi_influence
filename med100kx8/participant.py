@@ -13,23 +13,25 @@ def participant_info():
     name = input("Please enter your name: ")
     print(f'')
 
-    age = input("Please enter your age: ")
-    print(f'')
+    # Input validation for name (letters only)
+    while not name.isalpha():
+        print("Invalid input. Name should contain letters only.")
+        name = input("Please enter your name: ")
+        print(f'')
 
     gender = ""
     while gender.upper() not in ["M", "F"]:
         gender = input("Please enter your gender (M/F): ")
     print(f'')
 
-    # Input validation for name (letters only)
-    while not name.isalpha():
-        print("Invalid input. Name should contain letters only.")
-        name = input("Please enter your name: ")
+    age = input("Please enter your age: ")
+    print(f'')
 
     # Input validation for age (integer)
     while not age.isdigit():
         print("Invalid input. Age should be a positive integer.")
         age = input("Please enter your age: ")
+        print(f'')
     age = int(age)
 
     feeling = int(input("How are you feeling overall today? (1-5: 1=Awful, 5=Great): "))
@@ -40,6 +42,27 @@ def participant_info():
 
     focus_level = int(input("How is your level of focus today? (1-5: 1=Very low, 5=Very high): "))
     print(f'')
+
+    while True:
+        temperature = input("What is the local (indoor) temperature in Fahrenheit?: ")
+        print(f'')
+        try:
+            temperature = float(temperature)
+            break  # Exit the loop if a valid float is entered
+        except ValueError:
+            print("Invalid input. Temperature in Fahrenheit: ")
+            print(f'')
+        
+    while True:
+        humidity = input("What is the local (indoor) humidity?: ")
+        print(f'')
+        try:
+            humidity = float(humidity)
+            break  # Exit the loop if a valid float is entered
+        except ValueError:
+            print("Invalid input. Enter humidity: ")
+            print(f'')
+
 
     meditated_input = ""
     while meditated_input.upper() not in ["Y", "N"]:
@@ -55,11 +78,10 @@ def participant_info():
     eaten = True if eaten_input.upper() == "Y" else False
     print(f'')
 
-
     influence_mapping = {
-        1: "Produce more 0s",
-        2: "Produce more 1s",
-        3: "Alternate between producing more 0s and more 1s"
+        1: "Produce more 0s (time-bound)",
+        2: "Produce more 1s (time-bound)",
+        3: "Alternate between producing more 0s and more 1s (continuous)"
     }
 
     # Print technique mappings
@@ -78,6 +100,19 @@ def participant_info():
 
     # Retrieve the technique description based on the entered number
     influence_description = influence_mapping.get(influence)
+
+    if influence_description !="Alternate between producing more 0s and more 1s (continuous)":
+        duration_seconds = input("How many seconds should this supertrial last?: ")
+        print(f'')
+
+        # Input validation for age (integer)
+        while not duration_seconds.isdigit():
+            print("Invalid input. Seconds should be a positive integer.")
+            age = input("How many seconds should this supertrial last?: ")
+            print(f'')
+        duration_seconds = int(duration_seconds)
+    else:
+        duration_seconds = 0
 
 
     technique_mapping = {
@@ -112,14 +147,4 @@ def participant_info():
     print(f'Thank you, starting trial now...')
     print(f'')
 
-    # Print the entered information
-    #print("\nEntered Information:")
-    #print("Name:", name)
-    #print("Age:", age)
-    #print("Feeling:", feeling)
-    #print("Energy Level:", energy_level)
-    #print("Focus Level:", focus_level)
-    #print("Meditated:", meditated)
-    #print("Technique:", technique_description)
-
-    return name, age, gender, feeling, energy_level, focus_level, meditated, eaten, technique_description, influence_description
+    return name, age, gender, feeling, energy_level, focus_level, meditated, eaten, technique_description, influence_description, duration_seconds, temperature, humidity
