@@ -54,7 +54,7 @@ def participant_info():
             print(f'')
         
     while True:
-        humidity = input("What is the local (indoor) humidity?: ")
+        humidity = input("What is the local (indoor) humidity percentage?: ")
         print(f'')
         try:
             humidity = float(humidity)
@@ -79,9 +79,9 @@ def participant_info():
     print(f'')
 
     influence_mapping = {
-        1: "Produce more 0s (time-bound)",
-        2: "Produce more 1s (time-bound)",
-        3: "Alternate between producing more 0s and more 1s (continuous)"
+        1: "Produce more 0s",
+        2: "Produce more 1s",
+        3: "Alternate between producing more 0s and more 1s"
     }
 
     # Print technique mappings
@@ -101,18 +101,15 @@ def participant_info():
     # Retrieve the technique description based on the entered number
     influence_description = influence_mapping.get(influence)
 
-    if influence_description !="Alternate between producing more 0s and more 1s (continuous)":
-        duration_seconds = input("How many seconds should this supertrial last?: ")
-        print(f'')
+    duration_seconds = input("How many seconds should this supertrial last? (0=indefinite): ")
+    print(f'')
 
-        # Input validation for age (integer)
-        while not duration_seconds.isdigit():
-            print("Invalid input. Seconds should be a positive integer.")
-            age = input("How many seconds should this supertrial last?: ")
-            print(f'')
-        duration_seconds = int(duration_seconds)
-    else:
-        duration_seconds = 0
+    # Input validation for age (integer)
+    while not duration_seconds.isdigit():
+        print("Invalid input. Seconds should be a positive integer.")
+        age = input("How many seconds should this supertrial last?: ")
+        print(f'')
+    duration_seconds = int(duration_seconds)
 
 
     technique_mapping = {

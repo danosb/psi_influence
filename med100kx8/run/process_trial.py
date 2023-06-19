@@ -28,7 +28,7 @@ def process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial
 
         extraction_thread.result()
        
-        trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv = analysis_thread.result()
+        trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv, trial_count_bidirectional_is_pos = analysis_thread.result()
 
     trial_p = trialp_from_nwsv(trial_norm_weighted_sv, influence_type)
     trial_z = invnorm(trial_p)
@@ -43,8 +43,9 @@ def process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial
         'z_value': trial_z,
         'trial_weighted_sv': trial_weighted_sv,
         'trial_norm_weighted_sv': trial_norm_weighted_sv,
+        'trial_count_bidirectional_is_pos': trial_count_bidirectional_is_pos,
         'created_datetime': datetime.now()
     }
     db_queue.put(data)
 
-    return trial_p, trial_z
+    return trial_p, trial_z, trial_count_bidirectional_is_pos

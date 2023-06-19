@@ -32,6 +32,7 @@ n = 31 # Defined number of steps required to complete a random walk
 count_subtrial_per_trial = 21 # Number of subtrials per trial
 serial_number = "QWR4E010"  # Replace with your serial number
 window_size = 5 # Numbers of trials to include in a window
+window_group_size = 10 # Number of windows in a group
 significance_threshold = 0.05 # p-value significance
 
 
@@ -75,10 +76,11 @@ def main():
     count_window_total = 0
     window_total_p = 0.0
     window_total_SV = 0.0
-    window_total_reached_target = 0
     window_data = []
     influence_type = ''
     trial = 1
+    window_hits_data = []
+    window_z_data = []
 
     supertrial = get_supertrial(mysql_pool)
 
@@ -105,7 +107,7 @@ def main():
     participant_name, age, gender, feeling, energy_level, focus_level, meditated, eaten_recently, technique_description, influence_type, duration_seconds, local_temp_fahrenheit, local_humidity_percent = participant_info()
 
     data = {
-        'table': 'participant',
+        'table': 'participant_data',
         'supertrial': supertrial,
         'participant_name': participant_name,
         'age': age,
@@ -146,59 +148,94 @@ def main():
     cumulative_time = 0  # Initialize cumulative_time to 0
     state = {'cumulative_time_above_target': 0}  # Define state dictionary
 
+
     while (((time.time() - start_time) < duration_seconds) or duration_seconds == 0):
-    
-        trial_p, trial_z = process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial, influence_type)
+
+        trial_p, trial_z, trial_count_bidirectional_is_pos = process_trial(ftdi, trial, supertrial, db_queue, n, count_subtrial_per_trial, influence_type)
 
         # Update window_data
         if len(window_data) >= window_size:
             window_data.pop(0)
-        window_data.append({"trial_p": trial_p, "trial_z": trial_z})
+        window_data.append({"trial_p": trial_p, "trial_z": trial_z, "trial_count_bidirectional_is_pos": trial_count_bidirectional_is_pos})
         total_trial_completed_count = trial
         trial += 1
 
         # Calculate window_z, window_p, window_sv, and window_result_significant
         if len(window_data) == window_size and (trial - 1) % window_size == 0:
 
-            window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size)
-            window_p = cdf(window_z)
-            window_sv = math.log2(1 / window_p)
+            window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size) # sum all trial_z values for a window
+            count_window_hits_pos = sum([data["trial_count_bidirectional_is_pos"] for data in window_data]) # sum the count of times upper bound was hit
+            window_hit = 0
 
-            if influence_type != 'Alternate between producing more 0s and more 1s (continuous)' and window_p <= significance_threshold:
-                window_result_significant = True
+            if influence_type == 'Produce more 1s':
+                window_p = 1 - cdf(window_z)
+                if count_window_hits_pos > ((window_size * count_subtrial_per_trial) / 2): 
+                    window_hit = 1
 
-            elif influence_type == 'Alternate between producing more 0s and more 1s (continuous)' and ((window_p <= (significance_threshold/2)) or (window_p >= (1-(significance_threshold/2)))):
-                window_result_significant = True
+            if influence_type == 'Produce more 0s':
+                window_p = cdf(window_z)
+                if count_window_hits_pos < ((window_size * count_subtrial_per_trial) / 2):
+                    window_hit = 1
+
+            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0:
+                window_p = 2 * (1 - cdf(window_z))
+
+            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z < 0:
+                window_p = 2 * cdf(window_z)
             
-            else: 
+            if window_p <= 0.05:
+                window_result_significant = True
+            else:
                 window_result_significant = False
 
-            count_window_total += 1
-            if window_result_significant:
-                count_window_hit += 1
-                
-            # get p-value overall for all windows
-            if influence_type != 'Alternate between producing more 0s and more 1s (continuous)':
-                window_total_p = binomtest(count_window_hit, count_window_total, 0.5, alternative='greater').pvalue
+            window_sv = math.log2(1 / window_p)
 
-            if influence_type == 'Alternate between producing more 0s and more 1s (continuous)':
-                window_total_p = binomtest(count_window_hit, count_window_total, 0.5, alternative='two-sided').pvalue
+            # Update window_hits_data
+            if len(window_hits_data) >= window_group_size:
+                window_hits_data.pop(0)
+            window_hits_data.append(window_hit)
             
-            window_total_SV = math.log2(1 / window_total_p)
+            # Update window_z_data
+            if len(window_z_data) >= window_group_size:
+                window_z_data.pop(0)
+            window_z_data.append(window_z)
 
-            if influence_type != 'Alternate between producing more 0s and more 1s (continuous)' and window_total_p <= significance_threshold:
-                window_total_reached_target += 1
+            count_window_hit = sum(window_hits_data)
+            
+            window_group_z = sum(window_z_data) / math.sqrt(window_group_size)  # calculate group window_z
 
-            if influence_type == 'Alternate between producing more 0s and more 1s (continuous)' and ((window_total_p <= significance_threshold) or (window_total_p >= (1-significance_threshold))):
-                window_total_reached_target += 1
+            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s':
+                window_group_p = binomtest(count_window_hit, len(window_hits_data), 0.5, alternative='greater').pvalue
+            else: # for two-tailed
+                if window_group_z >= 0:
+                    window_group_p = 1 - (2 * (1 - cdf(window_group_z)))
+                else:
+                    window_group_p = 2 * cdf(window_group_z)
+                
+            window_group_SV = math.log2(1 / window_group_p)
 
+            end_time = time.time()  # Capture the end time
+            elapsed_time = end_time - start_time  # Calculate the elapsed time
+
+            # Update cube window for one-tailed-1s
+            if influence_type == 'Produce more 1s': 
+                cube_queue.put(((1-window_group_p)*(-1), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
+            
+            # Update cube window for one-tailed-0s
+            if influence_type == 'Produce more 0s':
+                cube_queue.put(((1-window_group_p), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
+
+            # Update cube window for two-tailed
+            if influence_type == 'Alternate between producing more 0s and more 1s': 
+                cube_queue.put((2*(.5-window_group_p), window_group_p, f"This text removed", duration_seconds - elapsed_time, True))
+            
             print(f"...")
+            print(f"Last window z-value: {window_z}")
             print(f"Last window p-value: {window_p}")
             print(f"Last window surprisal value: {window_sv}")
-            print(f"Window count hits: {count_window_hit} / {count_window_total} = {count_window_hit/count_window_total*100:.2f}%")
-            print(f"Overall window p-value: {window_total_p}")
-            print(f"Overall window surprisal value: {window_total_SV}")
-            print(f"Window count overall p-value reached target: {window_total_reached_target} / {count_window_total} = {window_total_reached_target/count_window_total*100:.2f}%")
+            print(f"Window group z-value: {window_group_z}")
+            print(f"Window group p-value: {window_group_p}")
+            print(f"Window group surprisal value: {window_group_SV}")
 
             # Add window data to DB write queue
             data = {
@@ -209,30 +246,16 @@ def main():
                 'window_p_value': window_p,
                 'window_SV': window_sv,
                 'window_result_significant': window_result_significant,
-                'count_window_total': count_window_total,
-                'count_window_hit': count_window_hit,
-                'window_total_p': window_total_p,
-                'window_total_SV': window_total_SV,
-                'window_total_reached_target': window_total_reached_target,
+                'window_hit': window_hit,
+                'count_window_hits_pos': count_window_hits_pos,
+                'window_group_p': window_group_p,
+                'window_group_SV': window_group_SV,
+                'window_group_z': window_group_z,
                 'created_datetime': datetime.now()
             }
+
             db_queue.put(data)
 
-            end_time = time.time()  # Capture the end time
-            elapsed_time = end_time - start_time  # Calculate the elapsed time
-
-            # Update cube window for one-tailed-1s
-            if influence_type == 'Produce more 1s (time-bound)': 
-                cube_queue.put(((1-window_total_p)*(-1), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time, False))
-            
-            # Update cube window for one-tailed-0s
-            if influence_type == 'Produce more 0s (time-bound)':
-                cube_queue.put(((1-window_total_p), 1-window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time, False))
-
-            # Update cube window for two-tailed
-            if influence_type == 'Alternate between producing more 0s and more 1s (continuous)': 
-                cube_queue.put(((2*(.5-window_total_p)), window_total_p, f"Overall surprisal value (higher is better): {window_total_SV:.3f}", duration_seconds - elapsed_time, True))
-            
         if stop_flag.value:  # Check the value of the stop_flag
             break  # Exit the while loop
     

@@ -29,12 +29,12 @@ def trialp_from_nwsv(nwsv, influence_type):
     if nwsv > 0:
         trial_p = 0.5 - xx
 
-    if influence_type == 'Produce more 1s (time-bound)':
+    if influence_type == 'Produce more 1s':
         trial_p = 1 - trial_p
 
-    if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s (continuous)':
+    if nwsv < 0 and influence_type == 'Alternate between producing more 0s and more 1s':
         trial_p = 2 * trial_p
-    if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s (continuous)':    
+    if nwsv > 0 and influence_type == 'Alternate between producing more 0s and more 1s':    
         trial_p = 2 * (1 - trial_p)
 
     return trial_p
@@ -88,12 +88,5 @@ def cdf(window_z):
     t = 1.0 + c7 * w * window_z
     y = 1.0 / t
     window_p = 0.5 + w * (0.5 - (c2 + (c6 + c5 * t + c4 * t ** 2 + c3 * t ** 3) / t ** 4) / (c1 * math.exp(0.5 * window_z ** 2) * t))
-    
-    # If the window_p value is less than 0.5, double the p value and that is the windowp value for a result of -1
-    # If the window_p value is greater than (or =) 0.5, the windowp value is 2(1-p) for a result of +1.
-    if window_p < 0.5:
-        window_p = window_p * 2
-    else:
-        window_p = 2 * (1 - window_p)
 
     return window_p

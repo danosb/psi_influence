@@ -26,10 +26,11 @@ Uses USB Mind-Enabled Devices (MED) from Core Invention as the QRNG source.
     ```$ mysql -u root myDatabase < db_setup.sql```
 1. Install Python module\
     ```$ pip3 install -r requirements.txt```
-1. Set your MED's serial number in main.py#33\
+1. Set your MED's serial number in run\main.py#33\
     ```serial_number = "QWR4E001"  # Replace with your serial number```
 
 ## Running
-
+``` cd \run```\
 ```$ python3 main.py```\
-![Screenshot](screenshot.png)
+![Screenshot](screenshot1.png)
+![Screenshot](screenshot2.png)

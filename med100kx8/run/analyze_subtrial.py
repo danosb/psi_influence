@@ -16,9 +16,10 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
     trial_norm_weighted_sv = 0
     int_array = []
     bidirectional_count = 0
-    bidirectional_is_pos = False
+    subtrial_bidirectional_is_pos = False
     number_steps = 0
     int_array = []
+    trial_count_bidirectional_is_pos = 0
 
     # Hard-code the empirically-generated values, for now.
    
@@ -43,7 +44,9 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
                 subtrial_number += 1
                 
                 if(bidirectional_count) > 0:
-                    bidirectional_is_pos = True
+                    subtrial_bidirectional_is_pos = True
+                else:
+                    subtrial_bidirectional_is_pos = False
 
                 if number_steps < 209:
                     p_calculated = 0.0625
@@ -68,9 +71,10 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
                 SV = math.log2(1 / p_calculated)
 
                 # Calculate trial-level data
-                if bidirectional_is_pos:
+                if subtrial_bidirectional_is_pos:
                     trial_weighted_sv += SV
                     trial_cum_sv += SV
+                    trial_count_bidirectional_is_pos += 1
                     trial_norm_weighted_sv = trial_weighted_sv / trial_cum_sv
                 else:
                     trial_weighted_sv -= SV
@@ -85,7 +89,7 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
                     'subtrial_number': subtrial_number,
                     'int_array': json.dumps(int_array),
                     'bidirectional_count': bidirectional_count,
-                    'bidirectional_is_pos': int(bidirectional_is_pos),
+                    'subtrial_bidirectional_is_pos': int(subtrial_bidirectional_is_pos),
                     'number_steps': number_steps,
                     'p_calculated': p_calculated,
                     'SV': SV,
@@ -93,27 +97,13 @@ def analyze_subtrial(number_queue, stop_event, db_queue, n, trial, supertrial, c
                 }
               
                 db_queue.put(data)
-               
-                #print(f"--------------")
-                #print(f"Sub-trial number: ", subtrial_number)
-                #print(f"Supertrial: ", supertrial)
-                #print(f"Trial: ", trial)
-                #print("Numbers generated (int): ", int_array)
-                #print("Bidirectional count: ", bidirectional_count)
-                #print("Bidirectional positive?: ", bidirectional_is_pos)
-                #print("Number of steps: ", number_steps)
-                #print(f"p calculated for subtrial: ",{p_calculated})
-                #print(f"Surprisal Value (SV) for subtrial: ",{SV})
-                #print(f"Cumulative SV for trial  {trial}: {trial_cum_sv}")
-                #print(f"Cumulative weighted SV for trial {trial}: {trial_weighted_sv}")
-                #print(f"Cumulative weighted normalized SV for trial {trial}: {trial_norm_weighted_sv}")
-
+        
                 bidirectional_count = 0
-                bidirectional_is_pos = False
+               
                 number_steps = 0
                 int_array = []
      
 
     stop_event.set() # We processed all subtrials, set the stop event to end extract
 
-    return (trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv)
+    return (trial_cum_sv, trial_weighted_sv, trial_norm_weighted_sv, trial_count_bidirectional_is_pos)

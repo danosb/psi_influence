@@ -15,7 +15,7 @@ def get_kp():
     current_month = current_time.month
 
     # Determine the most recently completed 3 hour period
-    completed_hour_block = current_hour // 3 if current_hour != 0 else 8
+    completed_hour_block = current_hour // 3 if current_hour != 0 else 7
 
     index_dict = {
         'Kp': [(33 + 7*i, 39 + 7*i) for i in range(8)],

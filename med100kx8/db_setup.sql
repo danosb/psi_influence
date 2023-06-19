@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS supertrial_data;
-DROP TABLE IF EXISTS paricipant;
+DROP TABLE IF EXISTS participant_data;
 DROP TABLE IF EXISTS solar_data;
 DROP TABLE IF EXISTS local_data;
 DROP TABLE IF EXISTS window_data;
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS supertrial_data (
     created_datetime DATETIME
 );
 
-CREATE TABLE IF NOT EXISTS participant (
+CREATE TABLE IF NOT EXISTS participant_data (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supertrial INT,
     participant_name VARCHAR(255),
@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_p_value FLOAT,
     window_SV FLOAT,
     window_result_significant BOOLEAN,
-    count_window_total INT,
-    count_window_hit INT,
-    window_total_p FLOAT,
-    window_total_SV FLOAT,
-    window_total_reached_target INT,
+    window_hit INT,
+    count_window_hits_pos INT,
+    window_group_p FLOAT,
+    window_group_SV FLOAT,
+    window_group_z FLOAT,
     created_datetime DATETIME
 );
 
@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS trial_data (
     trial_norm_weighted_sv FLOAT,
     p_value FLOAT,
     z_value FLOAT,
+    trial_count_bidirectional_is_pos INT,
     created_datetime DATETIME
 );
 
@@ -104,7 +105,7 @@ CREATE TABLE IF NOT EXISTS subtrial_data (
     subtrial_number INT,
     int_array TEXT,
     bidirectional_count INT,
-    bidirectional_is_pos BOOLEAN,
+    subtrial_bidirectional_is_pos BOOLEAN,
     number_steps INT,
     p_calculated FLOAT,
     SV FLOAT,

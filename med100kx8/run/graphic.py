@@ -225,7 +225,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, two_tailed=Fals
     draw_text((x_offset, y_offset), cumulative_time_label)
 
     # Draw time remaining label if two_tailed is False
-    if not two_tailed:
+    if time_remaining > 0:
         time_remaining_minutes = int((time_remaining + 1) // 60)
         time_remaining_seconds = int((time_remaining + 1) % 60)
         time_remaining_label = f"Time remaining: {time_remaining_minutes:02d}:{time_remaining_seconds:02d}"
