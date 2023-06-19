@@ -9,6 +9,12 @@ Uses USB Mind-Enabled Devices (MED) from Core Invention as the QRNG source.
 
 1. Install MySQL database\
     ```$ brew install mysql```
+1. Install required packages:
+    ```pyftdi```
+    ```scipy```
+    ```dbutils```
+    ```pygame```
+    ```pyopengl```
 1. Run MySQL\
     ```$ mysqld&```
 1. Connect to MySQL\
@@ -33,8 +39,9 @@ Uses USB Mind-Enabled Devices (MED) from Core Invention as the QRNG source.
 ``` cd \run```\
 ```$ python3 main.py```
 
-Two-tailed with 30 second run-time selected:
-![Screenshot](screenshot1.png)
+Two-tailed (turn device on/off) with 30 second run-time selected:
+
+[![Demo on Youtube](https://i.ibb.co/z8pWwfC/screenshot1.png)](https://youtu.be/8FgY3Wmqm7Q)
 
 One-tailed with indefinite run-time selected:
-![Screenshot](screenshot2.png)
+[![Demo on Youtube](https://i.ibb.co/12sFxLJ/screenshot2.png)](https://youtu.be/9u5S-hcTauI)
