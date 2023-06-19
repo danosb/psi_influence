@@ -1,5 +1,5 @@
 # quantum_influence
-The presented program is a modular and multithreaded data collection and analysis application for psychokinesis experiments, using a true random number generator (TRNG) as a device under test. It's written in Python and uses MySQL for data storage.
+The presented program is a modular and multithreaded data collection and analysis application for psychokinesis experiments, using a true random number generator (the med100kx8) as a device under test. It's written in Python and uses MySQL for data storage.
 
 
 ## Program Summary
@@ -26,15 +26,25 @@ The program overview is as follows:
 Here's a brief description of the files:
 
 **main.py**: The main execution script for the program. 
+
 **get_supertrial**: Pulls the last supertrial ID from the database.
+
 **extract_numbers.py**: Extracts raw bytes from the random number generator and converts them into binary strings.
+
 **analyze_subtrial.py**: Performs the random walk basis analysis to determine whether upper or lower bound is hit, and in how many steps.
+
 **process_trial.py**: Combines subtrial data into trials and performs some analysis.
+
 **get_dst.py**: Retreives and stores the Solar DST (Solar Dst Index), is a measure of the disturbance level in the Earth's magnetosphere caused by solar wind variations.
+
 **get_kp.py**: Retreives and stores the Kp geomagnetic index, a measurement of the global geomagnetic activity level, as well as other solar data. 
+
 **graphic.py**: Generates and controls the graphic window with the spinning cube, bar-chart, on/off switch, and displayed data.
+
 **p_and_z_funcs.py**: Used to calculate probabilities of trials, windows, and window groups.
+
 **participant.py**: Prompts the user for input data (personal, environtal, supertrial configurations).
+
 **write_to_database.py**: Controls writes to the database.
 
 
@@ -75,13 +85,13 @@ The program requires Python 3.6 or later.
 ``` cd run```\
 ```$ python3 main.py```
 
-Demos below (click images).
+## Demos below (click images).
 
-Two-tailed (turn device on/off) with 30 second run-time selected:
+Two-tailed (turn device on/off) with 30 second run-time selected (click for video):
 
 [![Demo on Youtube](https://i.ibb.co/z8pWwfC/screenshot1.png)](https://youtu.be/8FgY3Wmqm7Q)
 
-One-tailed with indefinite run-time selected:
+One-tailed with indefinite run-time selected (click for video):
 
 [![Demo on Youtube](https://i.ibb.co/12sFxLJ/screenshot2.png)](https://youtu.be/9u5S-hcTauI)
 
