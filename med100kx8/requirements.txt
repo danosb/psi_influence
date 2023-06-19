@@ -1,5 +1,0 @@
-pyftdi
-scipy
-dbutils
-pygame
-pyopengl
