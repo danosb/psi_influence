@@ -26,25 +26,15 @@ The program overview is as follows:
 Here's a brief description of the files:
 
 * **main.py**: The main execution script for the program. 
-
 * **get_supertrial**: Pulls the last supertrial ID from the database.
-
 * **extract_numbers.py**: Extracts raw bytes from the random number generator and converts them into binary strings.
-
 * **analyze_subtrial.py**: Performs the random walk basis analysis to determine whether upper or lower bound is hit, and in how many steps.
-
 * **process_trial.py**: Combines subtrial data into trials and performs some analysis.
-
 * **get_dst.py**: Retreives and stores the Solar DST (Solar Dst Index), is a measure of the disturbance level in the Earth's magnetosphere caused by solar wind variations.
-
 * **get_kp.py**: Retreives and stores the Kp geomagnetic index, a measurement of the global geomagnetic activity level, as well as other solar data. 
-
 * **graphic.py**: Generates and controls the graphic window with the spinning cube, bar-chart, on/off switch, and displayed data.
-
 * **p_and_z_funcs.py**: Used to calculate probabilities of trials, windows, and window groups.
-
 * **participant.py**: Prompts the user for input data (personal, environtal, supertrial configurations).
-
 * **write_to_database.py**: Controls writes to the database.
 
 
