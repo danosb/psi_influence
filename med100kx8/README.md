@@ -32,5 +32,9 @@ Uses USB Mind-Enabled Devices (MED) from Core Invention as the QRNG source.
 ## Running
 ``` cd \run```\
 ```$ python3 main.py```\
+
+Two-tailed with 30 second run-time selected:
 ![Screenshot](screenshot1.png)
+
+One-tailed with indefinite run-time selected:
 ![Screenshot](screenshot2.png)
