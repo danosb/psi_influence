@@ -1,4 +1,4 @@
-# quantum_influence
+# med100kx8
 The presented program is a modular and multithreaded data collection and analysis application for psychokinesis experiments, using a true random number generator (the med100kx8) as a device under test. It's written in Python and uses MySQL for data storage.
 
 
