@@ -172,7 +172,7 @@ def main():
                 if count_window_hits_pos > ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound
                     window_hit = 1
 
-            if influence_type == 'Produce more 0s':
+            if influence_type == 'Produce more 0s': # for one-tailed, target = more 0s
                 window_p = cdf(window_z)
                 if count_window_hits_pos < ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound. 
                     window_hit = 1
