@@ -161,7 +161,7 @@ def main():
         trial += 1
 
         # Calculate window_z, window_p, window_sv, and window_result_significant
-        if len(window_data) == window_size and (trial - 1) % window_size == 0:
+        if len(window_data) == window_size and (trial - 1) % window_size == 0: # loops for each window
 
             window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size) # sum all trial_z values for a window, divide by square root of window size
             count_window_hits_pos = sum([data["trial_count_bidirectional_is_pos"] for data in window_data]) # sum the count of times upper bound was hit for subtrials within a window
