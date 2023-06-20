@@ -163,24 +163,24 @@ def main():
         # Calculate window_z, window_p, window_sv, and window_result_significant
         if len(window_data) == window_size and (trial - 1) % window_size == 0:
 
-            window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size) # sum all trial_z values for a window
-            count_window_hits_pos = sum([data["trial_count_bidirectional_is_pos"] for data in window_data]) # sum the count of times upper bound was hit
+            window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size) # sum all trial_z values for a window, divide by square root of window size
+            count_window_hits_pos = sum([data["trial_count_bidirectional_is_pos"] for data in window_data]) # sum the count of times upper bound was hit for subtrials within a window
             window_hit = 0
 
-            if influence_type == 'Produce more 1s':
+            if influence_type == 'Produce more 1s': # for one-tailed, target = more 1s
                 window_p = 1 - cdf(window_z)
-                if count_window_hits_pos > ((window_size * count_subtrial_per_trial) / 2): 
+                if count_window_hits_pos > ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound
                     window_hit = 1
 
             if influence_type == 'Produce more 0s':
                 window_p = cdf(window_z)
-                if count_window_hits_pos < ((window_size * count_subtrial_per_trial) / 2):
+                if count_window_hits_pos < ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound. 
                     window_hit = 1
 
-            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0:
+            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0: # for two-tailed where window_z >= 0
                 window_p = 2 * (1 - cdf(window_z))
 
-            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z < 0:
+            if influence_type == 'Alternate between producing more 0s and more 1s' and window_z < 0: # for two-tailed where window_z < 0
                 window_p = 2 * cdf(window_z)
             
             if window_p <= 0.05:
@@ -190,32 +190,34 @@ def main():
 
             window_sv = math.log2(1 / window_p)
 
-            # Update window_hits_data
+            # Update window_hits_data. Tracks whether a window was a hit or not and adds it to a list of [window_size] length. This allows us to track how many windows in a window group resulted in hits. Only relevant for one-tailed.
             if len(window_hits_data) >= window_group_size:
                 window_hits_data.pop(0)
             window_hits_data.append(window_hit)
             
-            # Update window_z_data
+            # Update window_z_data. Adds window_z values to a list of [window_size] length. This allows us to sum all window_z values in a window group.
             if len(window_z_data) >= window_group_size:
                 window_z_data.pop(0)
             window_z_data.append(window_z)
 
-            count_window_hit = sum(window_hits_data)
+            count_window_hit = sum(window_hits_data) # How many of the windows in our window group resulted in hits.
             
             window_group_z = sum(window_z_data) / math.sqrt(window_group_size)  # calculate group window_z
 
-            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s':
-                window_group_p = binomtest(count_window_hit, len(window_hits_data), 0.5, alternative='greater').pvalue
+            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s': # If one-tailed in either direction
+                window_group_p = binomtest(count_window_hit, len(window_hits_data), 0.5, alternative='greater').pvalue # Perform one-tailed binomial test
             else: # for two-tailed
                 if window_group_z >= 0:
-                    window_group_p = 1 - (2 * (1 - cdf(window_group_z)))
-                else:
+                    window_group_p = 1 - (2 * (1 - cdf(window_group_z))) # Add a [1 - ...] prefix to Scott's original equation so that I can track whether upper or lower signifiance obtained.
+                 else:
                     window_group_p = 2 * cdf(window_group_z)
                 
             window_group_SV = math.log2(1 / window_group_p)
 
             end_time = time.time()  # Capture the end time
             elapsed_time = end_time - start_time  # Calculate the elapsed time
+
+            ## Three lines below send updates to the graphic window. In cube_queue.put, the first variable controls cube spin, second controls bar chart fill.
 
             # Update cube window for one-tailed-1s
             if influence_type == 'Produce more 1s': 
@@ -229,6 +231,7 @@ def main():
             if influence_type == 'Alternate between producing more 0s and more 1s': 
                 cube_queue.put((2*(.5-window_group_p), window_group_p, f"This text removed", duration_seconds - elapsed_time, True))
             
+            # Print window and window_group outcomes to console.
             print(f"...")
             print(f"Last window z-value: {window_z}")
             print(f"Last window p-value: {window_p}")
