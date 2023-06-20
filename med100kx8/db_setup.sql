@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_SV FLOAT,
     window_result_significant BOOLEAN,
     window_hit INT,
-    count_window_hits_pos INT,
     window_group_p FLOAT,
     window_group_SV FLOAT,
     window_group_z FLOAT,

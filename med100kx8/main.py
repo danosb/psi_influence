@@ -164,17 +164,17 @@ def main():
         if len(window_data) == window_size and (trial - 1) % window_size == 0: # loops for each window
 
             window_z = sum([data["trial_z"] for data in window_data]) / math.sqrt(window_size) # sum all trial_z values for a window, divide by square root of window size
-            count_window_hits_pos = sum([data["trial_count_bidirectional_is_pos"] for data in window_data]) # sum the count of times upper bound was hit for subtrials within a window
+    
             window_hit = 0
 
             if influence_type == 'Produce more 1s': # for one-tailed, target = more 1s
                 window_p = 1 - cdf(window_z)
-                if count_window_hits_pos > ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound
+                if window_z >= 0: 
                     window_hit = 1
 
             if influence_type == 'Produce more 0s': # for one-tailed, target = more 0s
                 window_p = cdf(window_z)
-                if count_window_hits_pos < ((window_size * count_subtrial_per_trial) / 2): # checks if more than half of subtrials in a window resulted in hitting upper bound. 
+                if window_z < 0:
                     window_hit = 1
 
             if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0: # for two-tailed where window_z >= 0
@@ -250,7 +250,6 @@ def main():
                 'window_SV': window_sv,
                 'window_result_significant': window_result_significant,
                 'window_hit': window_hit,
-                'count_window_hits_pos': count_window_hits_pos,
                 'window_group_p': window_group_p,
                 'window_group_SV': window_group_SV,
                 'window_group_z': window_group_z,
