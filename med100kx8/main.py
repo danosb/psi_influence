@@ -72,8 +72,8 @@ def main():
     db_writer_thread.start()  # Start the DB writer thread
     trial_p, trial_z = 0.0, 0.0
     total_trial_completed_count = 0
-    count_window_hit = 0
-    count_window_total = 0
+    count_window_group_hit = 0
+    count_total_window_hit_tracker = 0
     window_total_p = 0.0
     window_total_SV = 0.0
     window_data = []
@@ -171,11 +171,17 @@ def main():
                 window_p = 1 - cdf(window_z)
                 if window_z >= 0: 
                     window_hit = 1
+                    count_total_window_hit_tracker += 1
+                else:
+                    count_total_window_hit_tracker -= 1
 
             if influence_type == 'Produce more 0s': # for one-tailed, target = more 0s
                 window_p = cdf(window_z)
                 if window_z < 0:
                     window_hit = 1
+                    count_total_window_hit_tracker += 1
+                else:
+                    count_total_window_hit_tracker -= 1
 
             if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0: # for two-tailed where window_z >= 0
                 window_p = 2 * (1 - cdf(window_z))
@@ -200,16 +206,16 @@ def main():
                 window_z_data.pop(0)
             window_z_data.append(window_z)
 
-            count_window_hit = sum(window_hits_data) # How many of the windows in our window group resulted in hits.
+            count_window_group_hit = sum(window_hits_data) # How many of the windows in our window group resulted in hits.
             
             window_group_z = sum(window_z_data) / math.sqrt(window_group_size)  # calculate group window_z
 
             if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s': # If one-tailed in either direction
-                window_group_p = binomtest(count_window_hit, len(window_hits_data), 0.5, alternative='greater').pvalue # Perform one-tailed binomial test
+                window_group_p = binomtest(count_window_group_hit, len(window_hits_data), 0.5, alternative='greater').pvalue # Perform one-tailed binomial test
             else: # for two-tailed
                 if window_group_z >= 0:
                     window_group_p = 1 - (2 * (1 - cdf(window_group_z))) # Add a [1 - ...] prefix to Scott's original equation so that I can track whether upper or lower signifiance obtained.
-                 else:
+                else:
                     window_group_p = 2 * cdf(window_group_z)
                 
             window_group_SV = math.log2(1 / window_group_p)
@@ -221,11 +227,11 @@ def main():
 
             # Update cube window for one-tailed-1s
             if influence_type == 'Produce more 1s': 
-                cube_queue.put(((1-window_group_p)*(-1), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
+                cube_queue.put(((count_total_window_hit_tracker/10)*(-1), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
             
             # Update cube window for one-tailed-0s
             if influence_type == 'Produce more 0s':
-                cube_queue.put(((1-window_group_p), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
+                cube_queue.put(((count_total_window_hit_tracker/10), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
 
             # Update cube window for two-tailed
             if influence_type == 'Alternate between producing more 0s and more 1s': 
@@ -236,6 +242,9 @@ def main():
             print(f"Last window z-value: {window_z}")
             print(f"Last window p-value: {window_p}")
             print(f"Last window surprisal value: {window_sv}")
+            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s':
+                print(f"Last window was hit? (1=yes): {window_hit}")
+                print(f"Running overall window hit tracker: {count_total_window_hit_tracker}")
             print(f"Window group z-value: {window_group_z}")
             print(f"Window group p-value: {window_group_p}")
             print(f"Window group surprisal value: {window_group_SV}")
@@ -253,6 +262,7 @@ def main():
                 'window_group_p': window_group_p,
                 'window_group_SV': window_group_SV,
                 'window_group_z': window_group_z,
+                'count_total_window_hit_tracker': count_total_window_hit_tracker,
                 'created_datetime': datetime.now()
             }
 

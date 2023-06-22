@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_group_p FLOAT,
     window_group_SV FLOAT,
     window_group_z FLOAT,
+    count_total_window_hit_tracker INT,
     created_datetime DATETIME
 );
 
@@ -131,11 +132,10 @@ ALTER TABLE trial_data ADD INDEX supertrial_index (supertrial);
         , w.window_p_value as 'Window p-value'
         , w.window_SV as 'Window SV'
         , w.window_result_significant as 'Window result significant?'
-        , w.count_window_total as 'Cumulative window count'
-        , w.count_window_hit as 'Cumulative window hit count'
-        , w.window_total_p as 'Cumulative window p-value'
-        , w.window_total_SV as 'Cumulative window SV'
-        , w.window_total_reached_target as 'Cumulative number windows that reached target'
+        , w.count_window_group_hit as 'Window group hit count'
+        , w.window_group_p as 'Cumulative window p-value'
+        , w.window_group_SV as 'Cumulative window SV'
+        , w.window_group_reached_target as 'Cumulative number windows that reached target'
     from trial_data t
     left join window_data w on w.created_by_trial = t.trial and w.supertrial = t.supertrial
     left join supertrial_data s on s.supertrial = t.supertrial
