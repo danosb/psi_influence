@@ -73,9 +73,11 @@ def main():
     trial_p, trial_z = 0.0, 0.0
     total_trial_completed_count = 0
     count_window_group_hit = 0
-    count_total_window_hit_tracker = 0
+    count_total_window_bound_tracker = 0
     window_total_p = 0.0
     window_total_SV = 0.0
+    bar_fill_percent = 0.0
+    cube_spin_speed = 0
     window_data = []
     influence_type = ''
     trial = 1
@@ -171,17 +173,17 @@ def main():
                 window_p = 1 - cdf(window_z)
                 if window_z >= 0: 
                     window_hit = 1
-                    count_total_window_hit_tracker += 1
-                else:
-                    count_total_window_hit_tracker -= 1
+  
 
             if influence_type == 'Produce more 0s': # for one-tailed, target = more 0s
                 window_p = cdf(window_z)
                 if window_z < 0:
                     window_hit = 1
-                    count_total_window_hit_tracker += 1
-                else:
-                    count_total_window_hit_tracker -= 1
+  
+            if window_z > 0:
+                count_total_window_bound_tracker += 1
+            elif window_z < 0:
+                count_total_window_bound_tracker -= 1
 
             if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0: # for two-tailed where window_z >= 0
                 window_p = 2 * (1 - cdf(window_z))
@@ -214,7 +216,7 @@ def main():
                 window_group_p = binomtest(count_window_group_hit, len(window_hits_data), 0.5, alternative='greater').pvalue # Perform one-tailed binomial test
             else: # for two-tailed
                 if window_group_z >= 0:
-                    window_group_p = 1 - (2 * (1 - cdf(window_group_z))) # Add a [1 - ...] prefix to Scott's original equation so that I can track whether upper or lower signifiance obtained.
+                    window_group_p = 2 * (1 - cdf(window_group_z))
                 else:
                     window_group_p = 2 * cdf(window_group_z)
                 
@@ -223,28 +225,45 @@ def main():
             end_time = time.time()  # Capture the end time
             elapsed_time = end_time - start_time  # Calculate the elapsed time
 
-            ## Three lines below send updates to the graphic window. In cube_queue.put, the first variable controls cube spin, second controls bar chart fill.
+    
+            # Set graphic variables for one-tailed-0s
+            if influence_type == 'Produce more 0s': 
+                if count_total_window_bound_tracker < 0:
+                    cube_spin_speed = min((count_total_window_bound_tracker*(-1)) / 10, 1) # if it's greater than 1 then return 1 (1 is max speed)
+                else: # count_total_window_bound_tracker >= 0
+                    cube_spin_speed = 0    
 
-            # Update cube window for one-tailed-1s
+            # Set graphic variables for one-tailed-0s
             if influence_type == 'Produce more 1s': 
-                cube_queue.put(((count_total_window_hit_tracker/10)*(-1), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
-            
-            # Update cube window for one-tailed-0s
-            if influence_type == 'Produce more 0s':
-                cube_queue.put(((count_total_window_hit_tracker/10), 1-window_group_p, f"This text removed", duration_seconds - elapsed_time, False))
+                if count_total_window_bound_tracker > 0:
+                    cube_spin_speed = max((count_total_window_bound_tracker*(-1)) / 10, -1) # if it's less than -1 then return -1 (-1 is max speed)
+                else: # count_total_window_bound_tracker <= 0
+                    cube_spin_speed = 0
 
-            # Update cube window for two-tailed
+            # Set graphic variables for two-tailed
             if influence_type == 'Alternate between producing more 0s and more 1s': 
-                cube_queue.put((2*(.5-window_group_p), window_group_p, f"This text removed", duration_seconds - elapsed_time, True))
-            
+                cube_spin_speed = count_total_window_bound_tracker / 10
+                if cube_spin_speed > 1: # set max spin speed up
+                    cube_spin_speed = 1
+                if cube_spin_speed < -1: # set max spin speed down
+                    cube_spin_speed = -1
+                if window_group_z < 0:
+                    bar_fill_percent = window_group_p/2 
+                else:
+                    bar_fill_percent = 1 - (window_group_p/2)
+            else:
+                bar_fill_percent = 1-window_group_p
+
+            # Update graphic window
+            cube_queue.put((cube_spin_speed, bar_fill_percent, f"This text removed", duration_seconds - elapsed_time, True if influence_type == 'Alternate between producing more 0s and more 1s' else False))
+
             # Print window and window_group outcomes to console.
             print(f"...")
             print(f"Last window z-value: {window_z}")
             print(f"Last window p-value: {window_p}")
             print(f"Last window surprisal value: {window_sv}")
-            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s':
-                print(f"Last window was hit? (1=yes): {window_hit}")
-                print(f"Running overall window hit tracker: {count_total_window_hit_tracker}")
+            print(f"Last window was hit?: {'Yes' if window_hit == 1 else 'No'}")
+            print(f"Running overall window bound tracker: {count_total_window_bound_tracker}")
             print(f"Window group z-value: {window_group_z}")
             print(f"Window group p-value: {window_group_p}")
             print(f"Window group surprisal value: {window_group_SV}")
@@ -262,7 +281,7 @@ def main():
                 'window_group_p': window_group_p,
                 'window_group_SV': window_group_SV,
                 'window_group_z': window_group_z,
-                'count_total_window_hit_tracker': count_total_window_hit_tracker,
+                'count_total_window_bound_tracker': count_total_window_bound_tracker,
                 'created_datetime': datetime.now()
             }
 

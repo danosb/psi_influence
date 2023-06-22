@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS window_data (
     window_group_p FLOAT,
     window_group_SV FLOAT,
     window_group_z FLOAT,
-    count_total_window_hit_tracker INT,
+    count_total_window_bound_tracker INT,
     created_datetime DATETIME
 );
 

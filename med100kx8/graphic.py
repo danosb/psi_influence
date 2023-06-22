@@ -155,9 +155,13 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, two_tailed=Fals
     lower_color = (255, 0, 0)  # Red color
     border_color = (0, 0, 0)  # Black color
 
+    if two_tailed:
+        target_height=.975
+        lower_target_height=0.025
+
     target_y = y + int(height * target_height)  # Calculate y-coordinate of target line
     lower_target_y = y + int(height * lower_target_height)  # Calculate y-coordinate of lower target line
-    
+        
     time_remaining = state.get('time_remaining', 0)  # Get current cumulative time above target
 
     if two_tailed:
