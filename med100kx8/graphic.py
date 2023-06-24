@@ -327,7 +327,7 @@ def draw_cube(queue, stop_flag):
         draw_gradient_fill_bar(700, 100, 80, 400, state['fill_percentage'], state['two_tailed'])
 
         # Draw "Press X to exit" label
-        exit_label = "Press X to exit"
+        exit_label = f"{state['text']}, Press X to exit"
         glColor3f(0, 0, 0)  # Set text color to black
         x_offset = 10  # Offset from left border of screen
         y_offset = 10  # Offset from bottom border of screen

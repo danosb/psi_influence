@@ -174,7 +174,6 @@ def main():
                 if window_z >= 0: 
                     window_hit = 1
   
-
             if influence_type == 'Produce more 0s': # for one-tailed, target = more 0s
                 window_p = cdf(window_z)
                 if window_z < 0:
@@ -182,8 +181,12 @@ def main():
   
             if window_z > 0:
                 count_total_window_bound_tracker += 1
+                if count_total_window_bound_tracker >= 5:
+                    count_total_window_bound_tracker = 5
             elif window_z < 0:
                 count_total_window_bound_tracker -= 1
+                if count_total_window_bound_tracker <= -5:
+                    count_total_window_bound_tracker = -5
 
             if influence_type == 'Alternate between producing more 0s and more 1s' and window_z >= 0: # for two-tailed where window_z >= 0
                 window_p = 2 * (1 - cdf(window_z))
@@ -229,24 +232,20 @@ def main():
             # Set graphic variables for one-tailed-0s
             if influence_type == 'Produce more 0s': 
                 if count_total_window_bound_tracker < 0:
-                    cube_spin_speed = min((count_total_window_bound_tracker*(-1)) / 10, 1) # if it's greater than 1 then return 1 (1 is max speed)
-                else: # count_total_window_bound_tracker >= 0
+                    cube_spin_speed = (count_total_window_bound_tracker*(-1)) / 10 
+                else: # We only one the cube to spin one direction since this is one-tailed
                     cube_spin_speed = 0    
 
             # Set graphic variables for one-tailed-0s
             if influence_type == 'Produce more 1s': 
                 if count_total_window_bound_tracker > 0:
-                    cube_spin_speed = max((count_total_window_bound_tracker*(-1)) / 10, -1) # if it's less than -1 then return -1 (-1 is max speed)
-                else: # count_total_window_bound_tracker <= 0
+                    cube_spin_speed = (count_total_window_bound_tracker*(-1)) / 10
+                else: # We only one the cube to spin one direction since this is one-tailed
                     cube_spin_speed = 0
 
             # Set graphic variables for two-tailed
             if influence_type == 'Alternate between producing more 0s and more 1s': 
-                cube_spin_speed = count_total_window_bound_tracker / 10
-                if cube_spin_speed > 1: # set max spin speed up
-                    cube_spin_speed = 1
-                if cube_spin_speed < -1: # set max spin speed down
-                    cube_spin_speed = -1
+                cube_spin_speed = count_total_window_bound_tracker*(-1) / 10
                 if window_group_z < 0:
                     bar_fill_percent = window_group_p/2 
                 else:
@@ -255,7 +254,7 @@ def main():
                 bar_fill_percent = 1-window_group_p
 
             # Update graphic window
-            cube_queue.put((cube_spin_speed, bar_fill_percent, f"This text removed", duration_seconds - elapsed_time, True if influence_type == 'Alternate between producing more 0s and more 1s' else False))
+            cube_queue.put((cube_spin_speed, bar_fill_percent, f"Two-tailed" if influence_type == 'Alternate between producing more 0s and more 1s' else influence_type, duration_seconds - elapsed_time, True if influence_type == 'Alternate between producing more 0s and more 1s' else False))
 
             # Print window and window_group outcomes to console.
             print(f"...")
