@@ -1,3 +1,5 @@
+use myDatabase;
+
 DROP TABLE IF EXISTS supertrial_data;
 DROP TABLE IF EXISTS participant_data;
 DROP TABLE IF EXISTS solar_data;

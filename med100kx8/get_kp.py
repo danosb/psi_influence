@@ -3,10 +3,16 @@
 
 import urllib.request
 import datetime
+import ssl
+import urllib.request
+
+# Create an unverified context
+context = ssl._create_unverified_context()
 
 def get_kp():
     url = "https://www-app3.gfz-potsdam.de/kp_index/Kp_ap_Ap_SN_F107_nowcast.txt"
-    response = urllib.request.urlopen(url)
+    response = urllib.request.urlopen(url, context=context)
+
     lines = response.read().decode('utf-8').split('\n')
 
     current_time = datetime.datetime.utcnow()
