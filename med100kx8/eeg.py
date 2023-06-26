@@ -1,3 +1,6 @@
+# Used to pull data from the Emotiv Epoch EEG. 
+# Requires node-red server and mosquitto
+
 import paho.mqtt.client as mqtt
 
 # The callback for when the client receives a CONNACK response from the server.
