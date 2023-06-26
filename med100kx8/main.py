@@ -13,6 +13,8 @@ import json
 from datetime import datetime
 import math
 import os
+import contextlib
+import io
 from scipy.stats import binomtest
 from multiprocessing import Process, Queue, Value
 import multiprocessing
@@ -40,8 +42,27 @@ significance_threshold = 0.05 # p-value significance
 FTDI_DEVICE_LATENCY_MS = 2
 FTDI_DEVICE_PACKET_USB_SIZE = 8
 FTDI_DEVICE_TX_TIMEOUT = 5000
+
+# Get FTDI URL dynamically
+def list_devices():
+    # Create a string buffer and redirect stdout to it
+    buffer = io.StringIO()
+    with contextlib.redirect_stdout(buffer):
+        Ftdi().show_devices()
+
+    # Extract the device URL from the buffer's contents
+    output = buffer.getvalue()
+    lines = output.split("\n")
+    for line in lines:
+        if "ftdi://" in line:
+            return line.split()[0]  # The URL is the first part of the line
+
+    return None
+
+device_url = list_devices()
+
 ftdi = Ftdi()
-ftdi.open_from_url(f"ftdi://ftdi:232:{serial_number}/1")
+ftdi.open_from_url(device_url)
 ftdi.set_latency_timer(FTDI_DEVICE_LATENCY_MS)
 ftdi.write_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
 ftdi.read_data_get_chunksize = lambda x: FTDI_DEVICE_PACKET_USB_SIZE
