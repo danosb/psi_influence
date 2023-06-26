@@ -66,8 +66,6 @@ The program requires Python 3.6 or later.
 1. Goto folder and create tables\
     ```$ cd quantum_influence/med100kx8```\
     ```$ mysql -u root myDatabase < db_setup.sql```
-1. Install Python module\
-    ```$ pip3 install -r requirements.txt```
 1. Set your MED's serial number in main.py#33\
     ```serial_number = "QWR4E001"  # Replace with your serial number```
 
