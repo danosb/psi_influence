@@ -67,7 +67,7 @@ Here's a brief description of the files:
     set MYSQL_DB=myDatabase
 
 3b. Option 2: 
-In order to avoid having to enter the above variables everytime you restart the terminal, add thee above as environment variables within Windows. 
+In order to avoid having to enter the above variables everytime you restart the terminal, add tee above as environment variables within Windows. 
 - System properties > Advances > Environment Variables
 
 4. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip
