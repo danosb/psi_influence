@@ -87,6 +87,7 @@ In order to avoid having to enter the above variables everytime you restart the 
 3. Create the database\
     ```mysql> create database myDatabase;```\
     ```mysql> \q```
+   
 4a. Populate and run in terminal\
     ```$ export MYSQL_USER=root```\
     ```$ export MYSQL_PASSWORD=```\
@@ -94,6 +95,7 @@ In order to avoid having to enter the above variables everytime you restart the 
     ```$ export MYSQL_DB=myDatabase```
    
 4b. Optional, to make the above environment variables permanent in macOS (OS X), you can add them to your shell configuration file, such as ~/.bash_profile or ~/.bashrc. Otherwise, you have to re-enter these after each terminal restart.
+
 5. Goto folder and create database tables\
     ```$ cd quantum_influence/med100kx8```\
     ```$ mysql -u root myDatabase < db_setup.sql```
