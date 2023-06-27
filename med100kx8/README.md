@@ -45,7 +45,9 @@ Here's a brief description of the files:
 
 1. Ensure that pip and Python 3.6 or later are installed
 1. Run the following:
-    ```pip install mysql pymysql pyftdi datetime scipy dbutils requests pytz libusb urllib3 futures pygame numpy pyopengl libusb1 PyOpenGL_accelerate```\
+   
+    ```pip install mysql pymysql pyftdi datetime scipy dbutils requests pytz libusb urllib3 futures pygame numpy pyopengl libusb1 PyOpenGL_accelerate```
+   
     ```pip install playsound==1.2.2```
    
 ## Windows Setup Instructions
