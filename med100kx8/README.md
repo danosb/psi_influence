@@ -60,6 +60,7 @@ Here's a brief description of the files:
 2. Connect to local MySQL database server using the client above (or a different one), run quantum_influence/med100kx8/db_setup.sql to configure the database.
 
 3a. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
+
     ```set MYSQL_USER=root```\
     ```set MYSQL_PASSWORD=**YOUR PASSWORD**```\
     ```set MYSQL_HOST=localhost```\
