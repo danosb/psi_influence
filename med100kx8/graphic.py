@@ -1,10 +1,7 @@
-# This produces the graphic window
-
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
-from OpenGL.GLUT import *
 import numpy as np
 import os
 import pygame.mixer
@@ -15,6 +12,9 @@ cumulative_time_beyond_target = 0
 last_time = time.time() 
 start_time = time.time()  # Record the start time
 
+# Create Pygame font
+pygame.font.init()
+font = pygame.font.SysFont(None, 24) 
 
 # Defaults
 state = {
@@ -69,14 +69,35 @@ def cube():
     glEnd()
 
 
-def draw_text(position, text_string):
-    glColor3fv((0, 0, 0))  # Set text color
-    x, y = position
-    z = 0
-    glRasterPos3f(x, y, z)  # Set text position
-    for character in text_string:
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ord(character))
+from OpenGL.GL import *
+from OpenGL.GLU import *
 
+def draw_text(position, text_string):
+    x, y = position
+    surface = font.render(text_string, True, (0, 0, 0), (255, 255, 255))
+    data = pygame.image.tostring(surface, 'RGBA', 1)
+    width = surface.get_width()
+    height = surface.get_height()
+
+    # Switch to 2D
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    gluOrtho2D(0, pygame.display.get_surface().get_width(), 0, pygame.display.get_surface().get_height())
+    glMatrixMode(GL_MODELVIEW)
+    glPushMatrix()
+    glLoadIdentity()
+
+    glRasterPos2i(round(x), round(y))
+
+    glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, data)
+
+    # Switch back to 3D
+    glPopMatrix()
+    glMatrixMode(GL_PROJECTION)
+    glPopMatrix()
+   
+    glMatrixMode(GL_MODELVIEW)
 
 def change_cube_properties(new_rotation_speed, new_fill_percentage, new_text, passed_time_remaining, two_tailed, close_window=False):
 
@@ -222,7 +243,7 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, two_tailed=Fals
         draw_text((x + x_offset - 8, lower_target_y - y_offset - 15), lower_target_label)
 
     # Draw cumulative time above target label
-    cumulative_time_label = f"Total time beyond target: {cumulative_time_beyond_target -.63:.2f}s"
+    cumulative_time_label = f"Total time beyond target: {cumulative_time_beyond_target - 0.63:.2f}s"
     glColor3f(0, 0, 0)  # Set text color to black
     x_offset = 15  # Offset from left border of screen
     y_offset = 570  # Offset from top border of screen
@@ -312,7 +333,7 @@ def draw_cube(queue, stop_flag):
         # Calculate the total elapsed time
         total_elapsed_time = time.time() - start_time
 
-        # Calculate hours, minutes, seconds and milliseconds
+        # Calculate hours, minutes, seconds, and milliseconds
         hours, rem = divmod(total_elapsed_time, 3600)
         minutes, seconds = divmod(rem, 60)
         seconds, milliseconds = divmod(seconds, 1)
