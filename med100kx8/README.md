@@ -61,10 +61,10 @@ Here's a brief description of the files:
 
 3a. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
 
-    ```set MYSQL_USER=root```
-    ```set MYSQL_PASSWORD=**YOUR PASSWORD**```\
-    ```set MYSQL_HOST=localhost```\
-    ```set MYSQL_DB=myDatabase```
+    set MYSQL_USER=root
+    set MYSQL_PASSWORD=**YOUR PASSWORD**
+    set MYSQL_HOST=localhost
+    set MYSQL_DB=myDatabase
 
 3b. Option 2: 
 In order to avoid having to enter the above variables everytime you restart the terminal, add thee above as environment variables within Windows. 
@@ -82,17 +82,18 @@ In order to avoid having to enter the above variables everytime you restart the 
 
 1. Run MySQL\
     ```$ mysqld&```
-1. Connect to MySQL\
+2. Connect to MySQL\
     ```% mysql -u root```
-1. Create the database\
+3. Create the database\
     ```mysql> create database myDatabase;```\
     ```mysql> \q```
-1. Populate and run in terminal\
+4a. Populate and run in terminal\
     ```$ export MYSQL_USER=root```\
     ```$ export MYSQL_PASSWORD=```\
     ```$ export MYSQL_HOST=localhost```\
     ```$ export MYSQL_DB=myDatabase```
-1. Goto folder and create tables\
+4b. Optional, to make the above environment variables permanent in macOS (OS X), you can add them to your shell configuration file, such as ~/.bash_profile or ~/.bashrc. Otherwise, you have to re-enter these after each terminal restart.
+5. Goto folder and create database tables\
     ```$ cd quantum_influence/med100kx8```\
     ```$ mysql -u root myDatabase < db_setup.sql```
 
