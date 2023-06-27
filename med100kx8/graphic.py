@@ -251,11 +251,12 @@ def draw_gradient_fill_bar(x, y, width, height, fill_percentage, two_tailed=Fals
 
     # Draw time remaining label if two_tailed is False
     if time_remaining > 0:
-        time_remaining_minutes = int((time_remaining + 1) // 60)
+        time_remaining_hours = int((time_remaining + 1) // 3600)
+        time_remaining_minutes = int(((time_remaining + 1) % 3600) // 60)
         time_remaining_seconds = int((time_remaining + 1) % 60)
-        time_remaining_label = f"Time remaining: {time_remaining_minutes:02d}:{time_remaining_seconds:02d}"
+        time_remaining_label = f"Time remaining: {time_remaining_hours:02d}:{time_remaining_minutes:02d}:{time_remaining_seconds:02d}"
         glColor3f(0, 0, 0)  # Set text color to black
-        x_offset = 555  # Offset from left border of screen
+        x_offset = 582  # Offset from left border of screen
         y_offset = 570  # Offset from top border of screen
         draw_text((x_offset, y_offset), time_remaining_label)
 
@@ -341,7 +342,7 @@ def draw_cube(queue, stop_flag):
         # Draw the total elapsed time
         elapsed_time_label = f"Elapsed time: {int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         glColor3f(0, 0, 0)  # Set text color to black
-        x_offset = 555  # Offset from left border of screen
+        x_offset = 600  # Offset from left border of screen
         y_offset = 10  # Offset from bottom border of screen
         draw_text((x_offset, y_offset), elapsed_time_label)
         
