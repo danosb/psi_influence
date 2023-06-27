@@ -92,6 +92,7 @@ In order to avoid having to enter the above variables everytime you restart the 
     ```$ export MYSQL_PASSWORD=```\
     ```$ export MYSQL_HOST=localhost```\
     ```$ export MYSQL_DB=myDatabase```
+   
 4b. Optional, to make the above environment variables permanent in macOS (OS X), you can add them to your shell configuration file, such as ~/.bash_profile or ~/.bashrc. Otherwise, you have to re-enter these after each terminal restart.
 5. Goto folder and create database tables\
     ```$ cd quantum_influence/med100kx8```\
