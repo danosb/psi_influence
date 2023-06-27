@@ -104,8 +104,11 @@ In order to avoid having to enter the above variables everytime you restart the 
 ## Running
 
 1. Navigate to quantum_influence\med100kx8 directory in terminal
+   
 ```python main.py```
+
 or 
+
 ```python3 main.py```
 
 
