@@ -84,7 +84,7 @@ def get_kp():
             if month: values_dict['month'] = month
             if day: values_dict['day'] = day
 
-    print(values_dict)
+    #print(values_dict)
     
     
     return values_dict['Kp'], values_dict['BSR'], values_dict['Ap'], values_dict['Ap'], values_dict['SN'], values_dict['F10.7obs'], values_dict['F10.7adj']
