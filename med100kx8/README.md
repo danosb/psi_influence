@@ -115,7 +115,7 @@ or \
 
 Two-tailed (turn device on/off) with 30 second run-time selected (click for video):
 
-[![Demo on Youtube](https://i.ibb.co/z8pWwfC/screenshot1.png)](https://youtu.be/8FgY3Wmqm7Q)
+[![Demo on Youtube](https://i.ibb.co/MB8sRYF/Screenshot-2023-06-27-at-4-36-13-AM.png))](https://youtu.be/8FgY3Wmqm7Q)
 
 One-tailed with indefinite run-time selected (click for video):
 
