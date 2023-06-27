@@ -57,19 +57,19 @@ Here's a brief description of the files:
 
 2. Connect to local MySQL database server using the client above (or a different one), run quantum_influence/med100kx8/db_setup.sql to configure the database.
 
-3. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
+3a. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
     ```set MYSQL_USER=root```\
     ```set MYSQL_PASSWORD=**YOUR PASSWORD**```\
     ```set MYSQL_HOST=localhost```\
     ```set MYSQL_DB=myDatabase```
 
-4. Option 2: 
+3b. Option 2: 
 In order to avoid having to enter the above variables everytime you restart the terminal, add thee above as environment variables within Windows. 
 - System properties > Advances > Environment Variables
 
-5. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip
+4. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip
 
-6. Download https://zadig.akeo.ie/
+5. Download https://zadig.akeo.ie/
 - Options > List all devices
 - Find med100kx8
 - Change driver to libusb-win32 and click Replace
