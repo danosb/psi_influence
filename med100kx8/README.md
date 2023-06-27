@@ -70,7 +70,7 @@ Here's a brief description of the files:
 In order to avoid having to enter the above variables everytime you restart the terminal, add tee above as environment variables within Windows. 
 - System properties > Advances > Environment Variables
 
-4. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip
+4. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip (*Not sure if this is truly necessary, but including just in case)
 
 5. Download https://zadig.akeo.ie/
 - Options > List all devices
