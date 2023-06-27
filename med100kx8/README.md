@@ -59,7 +59,7 @@ Here's a brief description of the files:
 
 2. Connect to local MySQL database server using the client above (or a different one), run quantum_influence/med100kx8/db_setup.sql to configure the database.
 
-3a. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
+3a. Option 1: Replace the password below and enter the text below in a terminal (will have to be re-entered after closing terminal)
 
     set MYSQL_USER=root
     set MYSQL_PASSWORD=**YOUR PASSWORD**
@@ -88,7 +88,7 @@ In order to avoid having to enter the above variables everytime you restart the 
     ```mysql> create database myDatabase;```\
     ```mysql> \q```
    
-4a. Populate and run in terminal\
+4a. Update password and run in terminal\
     ```$ export MYSQL_USER=root```\
     ```$ export MYSQL_PASSWORD=```\
     ```$ export MYSQL_HOST=localhost```\
