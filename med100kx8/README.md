@@ -38,19 +38,48 @@ Here's a brief description of the files:
 * **write_to_database.py**: Controls writes to the database.
 
 
-## Setup (assuming OS X)
+## Pre-Setup Instructions
+
+1. Ensure that pip and Python 3.6 or later are installed
+
+1. Run the following:
+    ```pip install mysql pymysql pyftdi datetime scipy dbutils requests pytz libusb urllib3 futures pygame numpy pyopengl libusb1 PyOpenGL_accelerate```
+
+    ```pip install playsound==1.2.2```
+
+
+## Windows Setup Instructions
+
+1. Install MySQL Server community: https://dev.mysql.com/downloads/installer/
+- Install MySQL Server and MySQL Shell
+- Set root password to your desired password
+- Start MySQL Server local instance
+
+1. Connect to local MySQL database server using the client above (or a different one), run quantum_influence/med100kx8/db_setup.sql to configure the database.
+
+1. Option 1: Enter the text below in a terminal (will have to be re-entered after closing terminal)
+    set MYSQL_USER=root
+    set MYSQL_PASSWORD=**YOUR PASSWORD**
+    set MYSQL_HOST=localhost
+    set MYSQL_DB=myDatabase
+
+1. Option 2: 
+In order to avoid having to enter the above variables everytime you restart the terminal, add thee above as environment variables within Windows. 
+- System properties > Advances > Environment Variables
+
+1. Install FTDI drivers: https://ftdichip.com/wp-content/uploads/2021/08/CDM212364_Setup.zip
+
+1. Download https://zadig.akeo.ie/
+- Options > List all devices
+- Find med100kx8
+- Change driver to libusb-win32 and click Replace
+
+
+## OSX Setup Instructions
 
 The program requires Python 3.6 or later.
 
-1. Install required libraries:
-    ```mysql```
-    ```PyMySQL```
-    ```scipy```
-    ```dbutils```
-    ```pygame```
-    ```pyopengl```
-    ```pyftdi```
-    ```futures```
+
 1. Run MySQL\
     ```$ mysqld&```
 1. Connect to MySQL\
@@ -66,12 +95,16 @@ The program requires Python 3.6 or later.
 1. Goto folder and create tables\
     ```$ cd quantum_influence/med100kx8```\
     ```$ mysql -u root myDatabase < db_setup.sql```
-1. Set your MED's serial number in main.py#33\
-    ```serial_number = "QWR4E001"  # Replace with your serial number```
+
 
 ## Running
-``` cd run```\
-```$ python3 main.py```
+
+1. Navigate to quantum_influence\med100kx8 directory in terminal
+```python main.py```
+or 
+```python3 main.py```
+
+
 
 ## Demos below (click images).
 
