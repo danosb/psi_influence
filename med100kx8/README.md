@@ -113,13 +113,9 @@ or \
 
 ## Demos below (click images).
 
-Two-tailed (turn device on/off) with 30 second run-time selected (click for video):
+Two-tailed (turn device on/off) with indefinite run-time selected (click for video):
 
-[![Demo on Youtube](https://i.ibb.co/MB8sRYF/Screenshot-2023-06-27-at-4-36-13-AM.png))](https://youtu.be/8FgY3Wmqm7Q)
-
-One-tailed with indefinite run-time selected (click for video):
-
-[![Demo on Youtube](https://i.ibb.co/12sFxLJ/screenshot2.png)](https://youtu.be/9u5S-hcTauI)
+[![Demo on Youtube](https://i.ibb.co/h8dbbnC/ss.png))](https://youtu.be/wIXsSdyPN0Y)
 
 
 ## Contributing
