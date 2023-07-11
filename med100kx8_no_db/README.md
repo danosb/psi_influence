@@ -65,5 +65,12 @@ or
 ```python3 main.py```
 
 
+## Demos below (click images).
+
+Two-tailed (turn device on/off) with indefinite run-time selected (click for video):
+
+[![Demo on Youtube](https://i.ibb.co/h8dbbnC/ss.png))](https://youtu.be/wIXsSdyPN0Y)
+
+
 ## Contributing
 Contributions are welcome. Please submit a Pull Request or open an issue for any enhancements, bug fixes, or feature requests.
