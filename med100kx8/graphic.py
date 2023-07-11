@@ -307,11 +307,11 @@ def draw_cube(queue, stop_flag):
 
         # Check if the two-tailed flag is set and if the fill percentage exceeds the thresholds
         if state['two_tailed']:
-            if state['fill_percentage'] >= 0.95 and last_state_change_value != 'On':
+            if state['fill_percentage'] >= 0.975 and last_state_change_value != 'On':
                 circle_fill_color = (0, 1, 0)  # Green
                 circle_word = 'On'
                 last_state_change_value = 'On'
-            elif state['fill_percentage'] <= 0.05 and last_state_change_value != 'Off':
+            elif state['fill_percentage'] <= 0.025 and last_state_change_value != 'Off':
                 circle_fill_color = (1, 0, 0)  # Red
                 circle_word = 'Off'
                 last_state_change_value = 'Off'
