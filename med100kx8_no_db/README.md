@@ -6,7 +6,7 @@ The presented program is a modular and multithreaded data collection and analysi
 
 The program overview is as follows:
 
-1. The user inputs their participant information including their personal data, some environmental info, and the settings for the trial.
+1. The user inputs basic data to configure the run.
 
 1. The program connects to the random number generator, gets the raw bytes from it, and converts these bytes to binary strings of 1s and 0s.
 
