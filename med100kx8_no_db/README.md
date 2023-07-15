@@ -1,5 +1,5 @@
 # med100kx8_no_db
-The presented program is a modular and multithreaded data collection and analysis application for psychokinesis experiments, using a true random number generator (the med100kx8) as a device under test. It's written in Python. This is a simplified version of the broader med100kx8, which stores a variety of data to a database. This narrowed-down version stores no data.
+The presented program is a modular and multithreaded data collection and analysis application for psychokinesis experiments, using a true random number generator (the med100kx8) as a device under test. It's written in Python. This is a simplified version of the broader med100kx8, which stores a variety of data to a database. This narrowed-down version stores no data. The expanded version, which stores a broad range of real-time data for later analysis, can be found [here](https://github.com/danosb/quantum_influence/tree/main/med100kx8).
 
 
 ## Program Summary
