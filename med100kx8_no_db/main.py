@@ -171,41 +171,21 @@ def main():
             end_time = time.time()  # Capture the end time
             elapsed_time = end_time - start_time  # Calculate the elapsed time
 
-
-            # Two types of cube spin logic are implemented. Choose which you want (Scott likes X, Dan likes Y)
-            # If you uncomment lines with ##X then it uses count_total_window_bound_tracker
-            # If you uncomment lines with ##Y then it moves based on the bar fill
-
             # Set graphic variables for two-tailed
             if influence_type == 'Alternate between producing more 0s and more 1s': 
-        ##X     cube_spin_speed = count_total_window_bound_tracker*(-1) / 10 
                 if window_group_z < 0:
                     bar_fill_percent = window_group_p/2 
-                    cube_spin_speed = (.5 - bar_fill_percent) * 2 ##Y comment if using count_total_window_bound_tracker
+                    cube_spin_speed = (.5 - bar_fill_percent) * 2 
                 else:
                     bar_fill_percent = 1 - (window_group_p/2)
-                    cube_spin_speed = (bar_fill_percent - .5) * (-2) ##Y comment if using count_total_window_bound_tracker
+                    cube_spin_speed = (bar_fill_percent - .5) * (-2) 
             else:
                 bar_fill_percent = 1-window_group_p
 
-            if influence_type == 'Produce more 0s':         ##Y comment if using count_total_window_bound_tracker
-                cube_spin_speed = bar_fill_percent          ##Y comment if using count_total_window_bound_tracker
-            if influence_type == 'Produce more 1s':         ##Y comment if using count_total_window_bound_tracker
-                cube_spin_speed = bar_fill_percent * (-1)   ##Y comment if using count_total_window_bound_tracker               
-
-            # Set graphic variables for one-tailed-0s
-        ##X    if influence_type == 'Produce more 0s': 
-        ##X        if count_total_window_bound_tracker < 0: 
-        ##X            cube_spin_speed = (count_total_window_bound_tracker*(-1)) / 10 
-        ##X        else: # We only one the cube to spin one direction since this is one-tailed
-        ##X            cube_spin_speed = 0    
-
-            # Set graphic variables for one-tailed-0s
-        ##X    if influence_type == 'Produce more 1s': 
-        ##X        if count_total_window_bound_tracker > 0:
-        ##X            cube_spin_speed = (count_total_window_bound_tracker*(-1)) / 10
-        ##X        else: # We only one the cube to spin one direction since this is one-tailed
-        ##X            cube_spin_speed = 0
+            if influence_type == 'Produce more 0s':        
+                cube_spin_speed = bar_fill_percent          
+            if influence_type == 'Produce more 1s':         
+                cube_spin_speed = bar_fill_percent * (-1)   
 
            # Update graphic window.
             cube_queue.put((cube_spin_speed, bar_fill_percent, f"Two-tailed" if influence_type == 'Alternate between producing more 0s and more 1s' else influence_type, duration_seconds - elapsed_time, True if influence_type == 'Alternate between producing more 0s and more 1s' else False))
