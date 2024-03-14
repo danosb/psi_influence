@@ -12,7 +12,7 @@ The program overview is as follows:
 
 1. It uses Scott Wilber's Random Walk Bias Amplification (RWBA) method with advanced processing methods for increased effect size in anomalous cognition [details](https://drive.google.com/file/d/1rP7Ee35K0kbQ3zXCcZvnj3d5WqmROTT_/view). By default we use a bound of 31, which is the distance to the upper or lower bound. Basically every 1 that's generated is a step to the right, every 0 generated is a step to the left. This runs until either the upper or lower bound of 31 / -31 is hit. We track how many steps it took to hit the bound and which bound was hit.
 
-1. Results are then grouped into subtrials, trials, windows, window groups, and supertrials. A subtrial consists of one attempt to hit an upper or lower bound. By default there are 21 subtrials per trial, 5 trials per window, 10 windows per group. A window lasts roughly 1 second. One supertrial equals one overall run, which can be configured either to execute indefinite or based on a configured amount of seconds.
+1. Results are then grouped into subtrials, trials, windows, window groups, and supertrials. A subtrial consists of one attempt to hit an upper or lower bound. By default there are 21 subtrials per trial, 5 trials per window, 10 windows per window group. A window lasts roughly 1 second. A supertrial equals one overall program execution, which can be configured either to execute indefinitely or based on a configured amount of seconds.
 
 1. For each trial, window, and window group we calculate p and z values to determine probability of randomness. Both one-tailed (targeting either just more 1s or just more 0s) and two-tailed (targeting both more 1s and more 0s) are supported in a given supertrial. 
 
