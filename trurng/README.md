@@ -1,0 +1,3 @@
+This program uses the [TruRNG](https://ubld.it/truerng_v3) random number generator (RNG). As with other programs in this folder group, these random numbers are then used to evaluate the effect of intention on influencing their outcomes. The goal is to use intention to make the numbers less random, and to be able to measure and portay the effects of this influence using computer code.
+
+**trurng.py** in this folder. It simply grabs large sets of random numbers from the TruRNG and evaluates/returns the probability that the set contains more 0s than 1s. The data is not stored, only displayed. The user should try to influence the output to produce more 0s, and can watch the result in real-time.
