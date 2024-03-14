@@ -2,11 +2,13 @@ This code is written to use the [RNG-01A Random Number Generator](https://www.im
 
 The RNG-01 Random Number Generator is a lab quality instrument. It uses the immutable randomness of radioactivity decay to generate random numbers. Quantum mechanics states that the nuclear decay of atoms, are fundamentally random and cannot be predicted. Our device has a mini-Geiger counter that detects background radiation. The detection of a radioactive particle being a random event use to initiate the generation of a random number. The output of the built-in Geiger counter is monitored by a PIC microcontroller. The PIC microcontroller is rotating numbers inside a register at approximately 1,000,000 numbers a second. When a radioactive particle (Random Event) is detected the microcontroller stops the rotation of numbers, reads the current number in the register and produces a random number. 
 
-In this folder there are three files:
+The Random Number Generator (RNG-01A) will produce approximately one to three random numbers every minute from background radiation. However, a small piece of Uranium can be purchased online completely legaly (at least in the US) placed next to the RNG, significantly increasing the frequently of numbers produced due to increased radioactive decay (take basic safety precuations here, of course).
 
-* **rng_influence_geiger_realtime_only.py** -  Uses geiger-generated numbers generated in real-time. All results are combined into a single probability that probability controls a line chart and also the pitch of an audio tone, giving real-time feedback. The line, and the audio tone, go up or down in real-time based on calculated probability of results being random. If you are influencing the results with your intention, you'd expect to see/hear the line and the audio tone both rise.
+In this folder there are two files:
 
-* **rng_influence_geiger.py** - This is a more sophisticated version. Rather than only capturing and reacting to data in real-time, it captures three different sets of results:
+* **rng_influence_geiger_realtime_only.py** -  Uses Geiger-generated numbers generated in real-time. All results are combined into a single probability that probability controls a line chart and also the pitch of an audio tone, giving real-time feedback. The line, and the audio tone, go up or down in real-time based on calculated probability of results being random. If you are influencing the results with your intention, you'd expect to see/hear the line and the audio tone both rise.
+
+* **rng_influence_geiger.py** - This is a more sophisticated version of the above. Rather than only capturing and reacting to data in real-time, it captures three different sets of results:
   1. **Pre-run data - Unobserved** - Numbers are captured from the RNG and stored, the results are stored in a local database but NOT observed.
   2. **Pre-run data - Observed** - Numbers are captured from the RNG and stored, the results are stored in a local database and ARE observed..=
   3. **Real-time data** - Numbers are captured in real-time.
