@@ -23,7 +23,7 @@ The program overview is as follows:
 
 ## Data Collected
 
-In addition to experiment outcomes (represented as p-values, z-values, and surprisal values - discussed further in the **Understanding console output** section), this code captures a large number of variables during experimental runs in order to enable subsequent data analysis to be done.
+In addition to experiment probability outcomes (discussed further in the **Understanding console output** section), this code captures a large number of variables during experimental runs in order to enable subsequent data analysis to be done.
 
 I think there's good reason to believe that successful psi influence is a result of a variety of variables coming together in just the right way, but which variables have input and to what degree is not well understood. The version of the code that uses a database stores information for many different types of variables, which I deemed to have the best potential based on review of the admittedly limited research that's available. These include:
 
