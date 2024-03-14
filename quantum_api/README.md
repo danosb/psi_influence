@@ -4,7 +4,7 @@ For this subfolder we do not use a hardware-based random number generator (RNG) 
 
 There are two files in this folder:
 
-* **main2.py** - There are two different sets of numbers obtained from the quantum API here; 1) Those obtained a head of time and the results are observed. 2) Those obtained in real-time during a trial. The idea here is to enable replication of Helmut Schmidt's successful experiment in which he concluded that both real-time and unobserved results could still be influenced, while observed results could not.
+In **main2.py** there are two different sets of numbers obtained from the quantum API here; 1) Those obtained a head of time and the results are observed. 2) Those obtained in real-time during a trial. The idea here is to enable replication of Helmut Schmidt's successful experiment in which he concluded that both real-time and unobserved results could still be influenced, while observed results could not.
 
 A series of images is shown to the user in sequence during the experiment. The image instructs the user to try to influence the numbers to do one of three things:
   1. Influence the results to have more positive numbers
@@ -18,6 +18,5 @@ The user does not know if given image is pulling numbers from the quantum API in
 All data and results are stored to a local database. At the end, the user is presented with an overall outcome showing the probability of randomness for each set of numbers (pre-observed and real-time).
 In theory, we'd expect the real-time number set to be open to influence while the pre-observed group is not.
 
-* **main3.py** - Similar concept to above, but it uses only text rather than images, and also it only suggests to influence in one direction (rather than having varying instructions to influence in positive/negative directions).
+**main3.py** uses a basically similar approach as described above, but it uses only text rather than images, and also it only suggests to influence in one direction (rather than having varying instructions to influence in positive/negative directions).
 
-* 
