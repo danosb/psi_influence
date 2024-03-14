@@ -159,7 +159,7 @@ or \
 
 
 
-## Demos below (click images).
+## Demo (click image)
 
 Two-tailed (turn device on/off) with indefinite run-time selected (click for video):
 
