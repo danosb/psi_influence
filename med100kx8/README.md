@@ -67,6 +67,8 @@ Lastly, to reference the two other values returned in the console during program
 - **Last window was hit? (yes/no)** - This only applies to, and is only returned during, one-tailed analysis (when doing uni-directional targeting - only more 1s or alternatively only more 0s). For one-tailed analysis, a window hit is determined based on whether the **z-value** for that window has a polarity (positive or negative value) corresponding to the target direction (if targeting more 1s then a positive z-value for the window corresponds to a *hit*/*success*, if targeting more 0s then a negative z-value is a *hit*). In one-tailed we use the number of hits within a window group to calculate window group p and z values. For two-tailed analysis (where we watch for both more 1s and more 0s) window hits are not used to calculate window group p or z values. 
 - **Running overall window bound tracker** - For both one-tailed and two-tailed, in effect, this tracks consecutive z-value polarity for successive window outcomes. So, if a window has a z-value that's positive then our bound tracker adds 1. If a window has a z-value that's negative then we subtract one. The tracker maxes out at +5 and -5 (e.g., if it's at -5 and we get a z-value < 0 then we do not subtract 1). This running bound isn't actually used for anything meaningful, neither in terms of probability calculations nor visual effects in the graphical window.
 
+All of these values, and more, are also stored in the database in addition to being returned in the console.
+
 ## Files
 
 Here's a brief description of the files:
