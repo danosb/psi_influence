@@ -274,7 +274,8 @@ def main():
             print(f"Last window z-value: {window_z}")
             print(f"Last window p-value: {window_p}")
             print(f"Last window surprisal value: {window_sv}")
-            print(f"Last window was hit?: {'Yes' if window_hit == 1 else 'No'}")
+            if influence_type == 'Produce more 0s' or influence_type == 'Produce more 1s':
+                print(f"Last window was hit?: {'Yes' if window_hit == 1 else 'No'}")
             print(f"Running overall window bound tracker: {count_total_window_bound_tracker}")
             print(f"Window group z-value: {window_group_z}")
             print(f"Window group p-value: {window_group_p}")
