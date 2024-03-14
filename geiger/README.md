@@ -4,7 +4,7 @@ The RNG-01 Random Number Generator is a lab quality instrument. It uses the immu
 
 The Random Number Generator (RNG-01A) will produce approximately one to three random numbers every minute from background radiation. However, a small piece of Uranium can be purchased online completely legaly (at least in the US) placed next to the RNG, significantly increasing the frequently of numbers produced due to increased radioactive decay (take basic safety precuations here, of course).
 
-In this folder there are two files:
+In this folder there are three files:
 
 * **rng_influence_geiger_realtime_only.py** -  Uses Geiger-generated numbers generated in real-time. All results are combined into a single probability that probability controls a line chart and also the pitch of an audio tone, giving real-time feedback. The line, and the audio tone, go up or down in real-time based on calculated probability of results being random. If you are influencing the results with your intention, you'd expect to see/hear the line and the audio tone both rise.
 
@@ -19,5 +19,5 @@ The idea here is to enable replication of [Helmut Schmidt's successful experimen
 
 Since all three sets are combined into the same output when shown to the user, this is effectively a blind study that prevents the user from having knowledge about which individual results belong to which set (thus negating potential bias in which the participant may not try to influence results in the same way if they know a particular result has already been observed).
 
-
+* **use_all_rng_types.py** - This program allows multiple types of RNGs to be tested together. The geiger RNG (RNG-01A) is the main one, but numbers from the Quantum API and TruRNG (discussed in other sub-folders of this repo) can also be enabled. Basically instructions are given to either produce more 1s or more 0s during a series of one-minute windows. Data is pulled from all enabled sources, stored in the database, and probabilities of randomness are calculated independently from each device.
 
