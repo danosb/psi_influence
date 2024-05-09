@@ -47,7 +47,6 @@ Here's a brief description of the files:
 * **graphic.py**: Generates and controls the graphic window with the spinning cube, bar-chart, on/off switch, and displayed data.
 * **p_and_z_funcs.py**: Used to calculate probabilities of trials, windows, and window groups.
 * **participant.py**: Prompts the user for input data (personal, environtal, supertrial configurations).
-* **list_serial.py**: A debugging file that lists all connected devices.
 
 ## Setup Instructions
 
@@ -70,7 +69,7 @@ Here's a brief description of the files:
 
 ## OSX Setup Additional Instructions
 
-1. Nothing additional required
+1. Nothing additional required. Device debugging instructions can be found in the device_debug subfolder.
 
 
 ## Running
