@@ -85,6 +85,7 @@ Here's a brief description of the files:
 * **p_and_z_funcs.py**: Used to calculate probabilities of trials, windows, and window groups.
 * **participant.py**: Prompts the user for input data (personal, environtal, supertrial configurations).
 * **write_to_database.py**: Controls writes to the database.
+* **list_serial.py**: A debugging file that lists all connected devices.
 * **gsr_client.py**: Reads data from an external galvanic skin response sensor. **This function incomplete**
 * **gsr_server.py**: Code that runs on a Raspberry Pi powering external galvanic skin response sensor. **This function incomplete**
 * **eeg.py**: Reads data from an Emotiv Epoch EEG using a node-red server and mosquitto. **This function incomplete**
