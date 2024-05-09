@@ -1,0 +1,27 @@
+For OSX:
+
+pip3 install pylibftdi
+pip3 install FTD2XX
+pip3 install pyftdi
+brew install --cask ftdi-vcp-driver (then ran installer)
+brew install libftdi
+brew install libftdi0
+brew install libfido2
+brew install libomp
+brew install llvm
+brew install libusp
+brew install libusb
+
+also install TDIUSBSerialDriver_v2_4_2.dmg from https://mega.nz/file/184wFSBD#_Rmh_PRgnkJFFjkxW7zxnQzSthixAOsh7ZkzwK9ER5Y
+
+
+
+For Windows:
+
+Download https://zadig.akeo.ie/ 1
+
+    Options > List all devices
+    Find med100kx8
+    Change driver to libusb-win32 and click Replace
+
+That solved the “No backend available” error for me in Windows 11.
